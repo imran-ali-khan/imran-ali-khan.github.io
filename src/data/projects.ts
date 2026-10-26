@@ -285,22 +285,23 @@ export const caseStudies: CaseStudy[] = [
   },
 ];
 
-// Every other published app, shown as a card with one real store screenshot,
+// Every other published app, shown as a card with three real store screenshots,
 // a title, and a short plain description. Images live in /public/apps/cards.
 export type ShippedApp = {
   name: string;
   description: string;
-  image?: string;
+  // Left, middle, and right screenshot. Files live in /public/apps/fan.
+  images?: string[];
   links: StoreLinks;
 };
 
-const shot = (slug: string) => `apps/cards/${slug}-1.webp`;
+const fan = (slug: string) => [1, 2, 3].map((n) => `apps/fan/${slug}-${n}.webp`);
 
 export const shipped: ShippedApp[] = [
   {
     name: 'RRR Arena',
     description: 'A sports and gaming academy app with academies, tournaments, articles, videos, and a store.',
-    image: shot('rrr-arena'),
+    images: fan('rrr-arena'),
     links: {
       playStore: 'https://play.google.com/store/apps/details?id=com.vga.rrrarena',
       appStore: 'https://apps.apple.com/us/app/rrrarena/id6749176887',
@@ -309,7 +310,7 @@ export const shipped: ShippedApp[] = [
   {
     name: 'Bodinar',
     description: 'A family shopping app in Arabic and English. Browse categories, search and filter products, and check out.',
-    image: shot('bodinar'),
+    images: fan('bodinar'),
     links: {
       playStore: 'https://play.google.com/store/apps/details?id=com.tocaan.bodinar&hl=en',
       appStore: 'https://apps.apple.com/us/app/bodinar-%D8%A8%D9%88%D8%AF%D9%8A%D9%86%D8%A7%D8%B1/id6752568435',
@@ -318,7 +319,7 @@ export const shipped: ShippedApp[] = [
   {
     name: 'KiddoCanvas',
     description: 'A coloring app for kids. Tap to fill a picture with color. No ads, no tracking, and a grown-up check before any purchase.',
-    image: shot('kiddocanvas'),
+    images: fan('kiddocanvas'),
     links: {
       playStore: 'https://play.google.com/store/apps/details?id=com.handyhive.kiddocanvas',
     },
@@ -326,7 +327,7 @@ export const shipped: ShippedApp[] = [
   {
     name: 'Sure CRM',
     description: 'A real estate CRM for agents in Dubai. Manage leads, listings, and your daily schedule.',
-    image: shot('sure-crm'),
+    images: fan('sure-crm'),
     links: {
       playStore: 'https://play.google.com/store/apps/details?id=com.app.sureCrm&hl=en',
       appStore: 'https://apps.apple.com/us/app/sure-crm/id6743427892',
@@ -335,7 +336,7 @@ export const shipped: ShippedApp[] = [
   {
     name: 'Creative Homes CRM',
     description: 'A real estate CRM for Dubai agents. Track leads, tasks, and your schedule in one app.',
-    image: shot('creative-homes-crm'),
+    images: fan('creative-homes-crm'),
     links: {
       playStore: 'https://play.google.com/store/apps/details?id=com.creativehomes.crmapp',
       appStore: 'https://apps.apple.com/us/app/creative-homes-crm/id6468985460',
@@ -344,7 +345,7 @@ export const shipped: ShippedApp[] = [
   {
     name: 'GPG Global CRM',
     description: 'A real estate CRM for Dubai teams. Handle leads, listings, and viewings from one dashboard.',
-    image: shot('gpg-global-crm'),
+    images: fan('gpg-global-crm'),
     links: {
       playStore: 'https://play.google.com/store/apps/details?id=com.app.gpgGlobalCrm',
       appStore: 'https://apps.apple.com/us/app/gpg-global-crm/id6743427839',
@@ -353,7 +354,7 @@ export const shipped: ShippedApp[] = [
   {
     name: 'Stanford Properties CRM',
     description: 'A real estate CRM with a dashboard, leads, and company listings for the sales team.',
-    image: shot('stanford-properties-crm'),
+    images: fan('stanford-properties-crm'),
     links: {
       playStore: 'https://play.google.com/store/apps/details?id=com.stanford.crmapp.stanford_properties_crm_mobile',
     },
@@ -361,7 +362,7 @@ export const shipped: ShippedApp[] = [
   {
     name: 'Doted Driver',
     description: 'An app for drivers. Follow tickets, collect signatures, and share live location in the background.',
-    image: shot('doted-driver'),
+    images: fan('doted-driver'),
     links: {
       playStore: 'https://play.google.com/store/apps/details?id=com.dotedco.dotedDriver',
       appStore: 'https://apps.apple.com/app/doted-driver/id6739454766',
@@ -370,7 +371,7 @@ export const shipped: ShippedApp[] = [
   {
     name: 'DeliveriX User App',
     description: 'Place a delivery order in seconds, then follow your driver on the map until it arrives.',
-    image: shot('deliverix-user'),
+    images: fan('deliverix-user'),
     links: {
       appStore: 'https://apps.apple.com/us/app/deliverix-user/id6748141981',
     },
@@ -378,7 +379,7 @@ export const shipped: ShippedApp[] = [
   {
     name: 'DeliveriX Driver App',
     description: 'An app for delivery drivers. See your jobs, follow each step on the map, and track your earnings.',
-    image: shot('deliverix-driver'),
+    images: fan('deliverix-driver'),
     links: {
       playStore: 'https://play.google.com/store/apps/details?id=com.vga.deliverix.driver',
       appStore: 'https://apps.apple.com/us/app/deliverix-driver/id6748141427',
@@ -387,7 +388,7 @@ export const shipped: ShippedApp[] = [
   {
     name: 'CarHelp',
     description: 'A car help app that connects drivers with service vendors. Compare vendors, order, and track the order.',
-    image: shot('carhelp'),
+    images: fan('carhelp'),
     links: {
       playStore: 'https://play.google.com/store/apps/details?id=com.vga.carhelp',
       appStore: 'https://apps.apple.com/us/app/car-help-%D9%83%D8%A7%D8%B1-%D9%87%D9%8A%D9%84%D8%A8/id6755152556',
@@ -396,7 +397,7 @@ export const shipped: ShippedApp[] = [
   {
     name: 'AMR',
     description: 'A home and event services app. Pick a service, choose your event type, and book it.',
-    image: 'apps/amr-events.webp',
+    images: fan('amr'),
     links: {
       playStore: 'https://play.google.com/store/apps/details?id=com.vga.amr',
       appStore: 'https://apps.apple.com/us/app/amr-%D8%A2%D9%85%D8%B1/id6766049292',
@@ -405,7 +406,7 @@ export const shipped: ShippedApp[] = [
   {
     name: 'AllOut',
     description: 'Find trips and activities across the UAE, with a map to see what is nearby.',
-    image: shot('allout'),
+    images: fan('allout'),
     links: {
       playStore: 'https://play.google.com/store/apps/details?id=com.AllOut.app',
     },
@@ -413,7 +414,7 @@ export const shipped: ShippedApp[] = [
   {
     name: 'Fire Kirin Guide',
     description: 'A guide app with tips and strategies for players, with a Firestore-backed support section.',
-    image: shot('fire-kirin-guide'),
+    images: fan('fire-kirin-guide'),
     links: {
       playStore: 'https://play.google.com/store/apps/details?id=com.firekirin.guide',
     },

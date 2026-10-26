@@ -21,16 +21,18 @@ const base = import.meta.env.BASE_URL;
           style={`animation-delay: ${(index % 3) * 70}ms`}
         >
           <div class="media">
-            {app.image ? (
-              <img
-                class="shot"
-                src={`${base}${app.image}`}
-                alt={`${app.name} app screen`}
-                width={appImages[app.image].w}
-                height={appImages[app.image].h}
-                loading="lazy"
-                decoding="async"
-              />
+            {app.images ? (
+              app.images.map((src, i) => (
+                <img
+                  class={`shot p${i}`}
+                  src={`${base}${src}`}
+                  alt={`${app.name} app screen ${i + 1}`}
+                  width={appImages[src].w}
+                  height={appImages[src].h}
+                  loading="lazy"
+                  decoding="async"
+                />
+              ))
             ) : (
               <span class="initial" aria-hidden="true">{app.name.charAt(0)}</span>
             )}
@@ -54,9 +56,7 @@ const base = import.meta.env.BASE_URL;
     position: relative;
     display: flex;
     justify-content: center;
-    gap: 12px;
-    height: 210px;
-    padding: 18px 18px 0;
+    height: 214px;
     overflow: hidden;
     background:
       radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.18), transparent 70%),
@@ -71,19 +71,44 @@ const base = import.meta.env.BASE_URL;
     background: linear-gradient(to top, #0f1217, transparent);
     pointer-events: none;
   }
+  /* Three screenshots in a fan: the middle one is in front and a little bigger. */
   .shot {
-    width: 58%;
-    max-width: 170px;
+    position: absolute;
+    top: 20px;
     height: auto;
-    align-self: flex-start;
-    border-radius: 18px 18px 0 0;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px 16px 0 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-bottom: 0;
-    box-shadow: 0 18px 40px -16px rgba(0, 0, 0, 0.8);
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 18px 40px -16px rgba(0, 0, 0, 0.85);
+    transform-origin: 50% 100%;
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .group:hover .shot {
+  .p0 {
+    width: 112px;
+    left: calc(50% - 134px);
+    z-index: 1;
+    transform: rotate(-6deg) scale(0.94);
+  }
+  .p1 {
+    width: 128px;
+    left: calc(50% - 64px);
+    top: 14px;
+    z-index: 3;
+  }
+  .p2 {
+    width: 112px;
+    left: calc(50% + 22px);
+    z-index: 2;
+    transform: rotate(6deg) scale(0.94);
+  }
+  .group:hover .p0 {
+    transform: translateX(-10px) rotate(-10deg) scale(0.94);
+  }
+  .group:hover .p1 {
     transform: translateY(-8px) scale(1.03);
+  }
+  .group:hover .p2 {
+    transform: translateX(10px) rotate(10deg) scale(0.94);
   }
   .initial {
     align-self: center;
