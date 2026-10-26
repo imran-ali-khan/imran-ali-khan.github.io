@@ -1,25 +1,94 @@
 ---
 import { engineeringApproach } from '@/data/profile';
+
+const layers = [
+  {
+    key: 'pres',
+    n: '01',
+    title: 'Presentation',
+    text: 'Screens and widgets. They only show what the state tells them to show.',
+    tags: ['Widgets', 'BLoC', 'Provider', 'Riverpod'],
+  },
+  {
+    key: 'dom',
+    n: '02',
+    title: 'Domain',
+    text: 'The rules of the app. Plain Dart, with no Flutter and no API details.',
+    tags: ['Entities', 'Use cases', 'Repository contracts'],
+  },
+  {
+    key: 'data',
+    n: '03',
+    title: 'Data',
+    text: 'Talks to the server, Firebase, and local storage behind repositories.',
+    tags: ['REST', 'Dio', 'Firebase', 'Local storage'],
+  },
+];
 ---
 
 <section id="approach" class="border-y border-ink-800 bg-ink-900/40 py-20 sm:py-28" aria-labelledby="approach-heading">
   <div class="section">
-    <div class="reveal max-w-2xl">
-      <p class="section-label">How I work</p>
-      <h2 id="approach-heading" class="mt-3 text-3xl font-semibold text-ink-50 sm:text-4xl">
-        Engineering approach
-      </h2>
-      <p class="mt-4 text-ink-400">
-        The principles that show up consistently across every app I've shipped.
+    <div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_1.1fr]">
+      <div class="reveal">
+        <p class="section-label">How I work</p>
+        <h2 id="approach-heading" class="mt-3 text-3xl font-semibold text-ink-50 sm:text-4xl">
+          Engineering approach
+        </h2>
+        <p class="mt-4 max-w-lg text-ink-400">
+          I build every app in three layers, and each layer has one job. That way a change in one place does not break
+          the rest of the app.
+        </p>
+
+        <ul class="mt-8 list-none space-y-3 p-0">
+          {
+            layers.map((l) => (
+              <li class={`layer-item l-${l.key}`} data-k={l.key}>
+                <span class="font-mono text-2xs text-[var(--c)]">{l.n}</span>
+                <div>
+                  <h3 class="text-base font-semibold text-ink-50">{l.title}</h3>
+                  <p class="mt-1 text-sm leading-relaxed text-ink-400">{l.text}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="scene" id="arch-scene" role="img" aria-label="Three layers of an app: presentation, domain, and data">
+        <div class="stack" id="arch-stack">
+          <div class="shadow"></div>
+          {
+            [...layers].reverse().map((l) => (
+              <div class={`slab l-${l.key}`} data-k={l.key}>
+                <div>
+                  <small>Layer {l.n}</small>
+                  <b>{l.title}</b>
+                </div>
+                <div class="chips">
+                  {l.tags.map((t) => (
+                    <span>{t}</span>
+                  ))}
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal mt-20 max-w-2xl">
+      <h3 class="text-2xl font-semibold text-ink-50">The rules I follow in every app</h3>
+      <p class="mt-3 text-ink-400">
+        This includes how I use AI tools like Claude Code and Cursor: they write fast, and I check everything.
       </p>
     </div>
 
-    <div class="mt-14 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
       {
         engineeringApproach.map((item, i) => (
           <div class="reveal" style={`animation-delay: ${i * 60}ms`}>
             <span class="font-mono text-2xs text-ink-600">{String(i + 1).padStart(2, '0')}</span>
-            <h3 class="mt-2 font-semibold text-ink-50">{item.title}</h3>
+            <h4 class="mt-2 font-semibold text-ink-50">{item.title}</h4>
             <p class="mt-2 text-sm leading-relaxed text-ink-400">{item.description}</p>
           </div>
         ))
@@ -27,3 +96,172 @@ import { engineeringApproach } from '@/data/profile';
     </div>
   </div>
 </section>
+
+<style>
+  .l-pres {
+    --c: #38bdf8;
+  }
+  .l-dom {
+    --c: #a78bfa;
+  }
+  .l-data {
+    --c: #34d399;
+  }
+
+  .layer-item {
+    display: flex;
+    gap: 16px;
+    padding: 16px 18px;
+    border: 1px solid #22262e;
+    border-radius: 14px;
+    background: #111318;
+    opacity: 0.7;
+    transition: 0.25s;
+  }
+  .layer-item.hot,
+  .layer-item:hover {
+    opacity: 1;
+    border-color: var(--c);
+    transform: translateX(6px);
+    box-shadow: 0 16px 40px -22px var(--c);
+  }
+
+  .scene {
+    display: grid;
+    place-items: center;
+    height: 440px;
+    perspective: 1700px;
+  }
+  .stack {
+    position: relative;
+    width: 340px;
+    height: 220px;
+    transform-style: preserve-3d;
+    transform: rotateX(60deg) rotateZ(-30deg);
+  }
+  .slab {
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    border: 1.5px solid var(--c);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--c) 26%, #0b0d12), color-mix(in srgb, var(--c) 8%, #0b0d12));
+    box-shadow: 0 0 0 1px #000 inset, 0 40px 60px -30px var(--c);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 18px 20px;
+    backface-visibility: hidden;
+    transition: transform 1.3s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s, box-shadow 0.25s;
+  }
+  .slab::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-image: linear-gradient(#ffffff0d 1px, transparent 1px), linear-gradient(90deg, #ffffff0d 1px, transparent 1px);
+    background-size: 28px 28px;
+    pointer-events: none;
+  }
+  .slab.l-data {
+    transform: translateZ(0);
+  }
+  .slab.l-dom {
+    transform: translateZ(14px);
+  }
+  .slab.l-pres {
+    transform: translateZ(28px);
+  }
+  .stack.open .slab.l-dom {
+    transform: translateZ(95px);
+  }
+  .stack.open .slab.l-pres {
+    transform: translateZ(190px);
+  }
+  .slab.hot {
+    filter: brightness(1.35);
+    box-shadow: 0 0 0 1px #000 inset, 0 0 60px -6px var(--c);
+  }
+  .slab small {
+    font: 500 10px 'JetBrains Mono', monospace;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--c) 70%, #fff);
+  }
+  .slab b {
+    display: block;
+    margin-top: 6px;
+    font-size: 24px;
+    letter-spacing: -0.01em;
+    color: #f5f6f8;
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .chips span {
+    font: 500 10px 'JetBrains Mono', monospace;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid color-mix(in srgb, var(--c) 40%, transparent);
+    color: #d5dae2;
+  }
+  .shadow {
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    background: radial-gradient(ellipse, rgba(0, 0, 0, 0.7), transparent 70%);
+    transform: translateZ(-30px) scale(1.05);
+    filter: blur(24px);
+  }
+
+  @media (max-width: 640px) {
+    .scene {
+      height: 340px;
+    }
+    .stack {
+      width: 250px;
+      height: 170px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .slab {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const stack = document.getElementById('arch-stack');
+  const scene = document.getElementById('arch-scene');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (stack && scene) {
+    if (reduceMotion) {
+      stack.classList.add('open');
+    } else {
+      // Pull the layers apart when the picture scrolls into view.
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              stack.classList.add('open');
+              io.disconnect();
+            }
+          });
+        },
+        { threshold: 0.45 }
+      );
+      io.observe(scene);
+    }
+
+    // Hovering a layer in the list lights up the same layer in the picture.
+    const parts = Array.from(document.querySelectorAll<HTMLElement>('[data-k]'));
+    parts.forEach((el) => {
+      el.addEventListener('pointerenter', () => parts.forEach((o) => o.classList.toggle('hot', o.dataset.k === el.dataset.k)));
+      el.addEventListener('pointerleave', () => parts.forEach((o) => o.classList.remove('hot')));
+    });
+  }
+</script>

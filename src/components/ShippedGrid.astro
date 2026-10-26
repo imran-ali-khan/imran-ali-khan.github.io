@@ -1,25 +1,100 @@
 ---
 import { shipped } from '@/data/projects';
+import { appImages } from '@/data/appImages';
 import StoreLinks from '@/components/StoreLinks.astro';
+
+const base = import.meta.env.BASE_URL;
 ---
 
 <div>
-  <h3 class="text-lg font-semibold text-ink-50">Also shipped</h3>
-  <p class="mt-2 max-w-xl text-sm text-ink-400">
-    More production apps built and released across client and internal projects, mostly Dubai real estate CRMs and a handful of consumer apps.
+  <h3 class="text-xl font-semibold text-ink-50">Also shipped</h3>
+  <p class="mt-2 max-w-xl text-ink-400">
+    More apps I worked on and helped release with clients and teams. Most are real estate CRMs in Dubai, plus delivery and consumer apps.
   </p>
 
-  <ul class="mt-8 grid grid-cols-1 gap-px overflow-hidden rounded-xl border border-ink-800 bg-ink-800 sm:grid-cols-2 lg:grid-cols-3">
+  <ul class="mt-8 grid list-none grid-cols-1 gap-5 p-0 sm:grid-cols-2 lg:grid-cols-3" style="perspective: 1400px;">
     {
-      shipped.map((app) => (
-        <li class="reveal card-hover bg-ink-950 p-5">
-          <p class="font-medium text-ink-100">{app.name}</p>
-          {app.category && <p class="mt-1 text-xs text-ink-500">{app.category}</p>}
-          <div class="mt-4">
-            <StoreLinks links={app.links} name={app.name} />
+      shipped.map((app, index) => (
+        <li
+          class="reveal tilt group flex flex-col overflow-hidden rounded-2xl border border-ink-800 bg-ink-900/50 transition-colors hover:border-ink-700"
+          data-tilt="4"
+          style={`animation-delay: ${(index % 3) * 70}ms`}
+        >
+          <div class="media">
+            {app.image ? (
+              <img
+                class="shot"
+                src={`${base}${app.image}`}
+                alt={`${app.name} app screen`}
+                width={appImages[app.image].w}
+                height={appImages[app.image].h}
+                loading="lazy"
+                decoding="async"
+              />
+            ) : (
+              <span class="initial" aria-hidden="true">{app.name.charAt(0)}</span>
+            )}
+          </div>
+
+          <div class="flex flex-1 flex-col gap-2 p-5">
+            <h4 class="text-base font-semibold text-ink-50">{app.name}</h4>
+            <p class="text-sm leading-relaxed text-ink-400">{app.description}</p>
+            <div class="mt-auto pt-3">
+              <StoreLinks links={app.links} name={app.name} />
+            </div>
           </div>
         </li>
       ))
     }
   </ul>
 </div>
+
+<style>
+  .media {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    height: 210px;
+    padding: 18px 18px 0;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.18), transparent 70%),
+      linear-gradient(180deg, #14181f, #0f1217);
+    border-bottom: 1px solid #1c2028;
+  }
+  .media::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 56px;
+    background: linear-gradient(to top, #0f1217, transparent);
+    pointer-events: none;
+  }
+  .shot {
+    width: 58%;
+    max-width: 170px;
+    height: auto;
+    align-self: flex-start;
+    border-radius: 18px 18px 0 0;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 0;
+    box-shadow: 0 18px 40px -16px rgba(0, 0, 0, 0.8);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .group:hover .shot {
+    transform: translateY(-8px) scale(1.03);
+  }
+  .initial {
+    align-self: center;
+    font-size: 72px;
+    font-weight: 700;
+    color: rgba(56, 189, 248, 0.5);
+    padding-bottom: 18px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .shot {
+      transition: none;
+    }
+  }
+</style>

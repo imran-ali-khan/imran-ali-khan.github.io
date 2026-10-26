@@ -7,21 +7,23 @@ import Skills from '@/components/Skills.astro';
 import Approach from '@/components/Approach.astro';
 import Achievements from '@/components/Achievements.astro';
 import About from '@/components/About.astro';
+import Faq from '@/components/Faq.astro';
 import Contact from '@/components/Contact.astro';
 import { profile } from '@/data/profile';
 
-const title = `${profile.name} | ${profile.role} | Lahore, Pakistan`;
+const title = `${profile.name} | Senior Flutter Developer in Lahore`;
 const description =
-  'Senior Flutter Developer with four and a half years shipping production Android and iOS apps. Experienced in Clean Architecture, offline-first sync, real-time messaging, and building a SaaS product from scratch. Available immediately.';
+  'Senior Flutter developer in Lahore, Pakistan. 4.5+ years building Android and iOS apps. Remote worldwide, onsite in Pakistan, UAE, and Saudi Arabia.';
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} isHome>
   <Hero />
   <Experience />
+  <Achievements />
   <Projects />
   <Skills />
   <Approach />
-  <Achievements />
   <About />
+  <Faq />
   <Contact />
 </BaseLayout>

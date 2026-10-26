@@ -103,13 +103,17 @@
     right: 0;
   }
 
-  .reveal {
+  /* Content is only hidden when JavaScript is running (the "js" class is set in the head),
+     so visitors and crawlers without JavaScript still see everything. */
+  .js .reveal {
     opacity: 0;
     transform: translateY(14px);
   }
 
-  .reveal.is-visible {
-    animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  .js .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+    animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
   }
 
   @keyframes fadeUp {
@@ -117,17 +121,59 @@
       opacity: 0;
       transform: translateY(14px);
     }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .reveal {
+    .js .reveal {
       opacity: 1;
       transform: none;
       animation: none;
     }
+  }
+
+  .text-gradient {
+    background: linear-gradient(90deg, theme('colors.signal.bright'), theme('colors.signal.DEFAULT') 55%, #818cf8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* 3D tilt card. The tilt itself is set by a small script in BaseLayout. */
+  .tilt {
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s, box-shadow 0.3s;
+    will-change: transform;
+  }
+
+  .tilt::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    pointer-events: none;
+    background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), theme('colors.signal.DEFAULT'), transparent 60%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .tilt::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(300px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.07), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .tilt:hover::before,
+  .tilt:hover::after {
+    opacity: 1;
   }
 }

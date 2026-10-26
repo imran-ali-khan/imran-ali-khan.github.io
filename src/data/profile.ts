@@ -26,9 +26,17 @@ export const profile = {
 
   // Hero headline, kept factual, no invented claims.
   heroHeadline: "I build Flutter apps that ship on time and hold up long after launch.",
+  // Part of the headline shown with the blue gradient.
+  heroHighlight: "ship on time",
 
   heroSubline:
-    "Four and a half years building production Android and iOS apps, from hardware-integrated workforce tools to real-time CRMs and a SaaS platform I built from the ground up. Based in Lahore, available to start right away.",
+    "I'm Imran Ali Khan, a senior Flutter developer in Lahore, Pakistan. I have 4.5+ years of experience building Android and iOS apps, from CRMs to delivery apps to a SaaS app built from zero. I also use AI tools like Claude Code and Cursor to build faster.",
+
+  // Where Imran can work. Used in the hero, contact section, FAQ and search data.
+  workModes: 'Remote for clients worldwide. Onsite in Lahore, Islamabad, the UAE, and Saudi Arabia.',
+
+  // Path inside /public, for example 'imran.webp'. Leave empty until a photo is added.
+  photo: '',
 
   // Longer narrative for the About / Engineering Approach section, written
   // in the user's own voice and lightly edited for the page.
@@ -37,7 +45,7 @@ export const profile = {
     "I started at BJS Soft Solutions, migrating legacy Windows systems to Flutter and building workforce management apps for admin, manager, supervisor, and worker roles, with hardware control through platform channels.",
     "At Senarios, I moved deeper into architecture work: offline-first storage, syncing data with the server, and real-time messaging.",
     "Most recently, at ISKAAN Tech, I built a SaaS product from scratch and upgraded several live CRM apps for clients in Dubai. The company downsized in 2025, which is why I'm available right away.",
-    "Over the last two years, my work has shifted. I spend less time on the mechanical parts of implementation, since AI tools like Claude Code and Cursor, used with careful prompt engineering, now handle a lot of that, and more time with stakeholders, figuring out what they actually need and writing it down properly. That's why roles centered on understanding a real business process, not just writing code, interest me the most.",
+    "For the last two years, I have used AI tools like Claude Code and Cursor to write the routine parts of the code. I guide them with clear prompts, and I check everything they write. This gives me more time to talk with the people who use the product and understand what they really need. That is why I enjoy roles where understanding the business matters as much as writing code.",
   ],
 
   resumeFile: 'imran-ali-khan-flutter-developer.pdf',
@@ -96,5 +104,52 @@ export const achievements = [
     label: 'SaaS product',
     value: '1',
     detail: 'Architected and built from scratch at ISKAAN Tech',
+  },
+];
+
+// Short facts shown in the About section. Search engines and AI tools read this easily.
+export const quickFacts = [
+  { label: 'Role', value: 'Senior Flutter Developer' },
+  { label: 'Experience', value: '4.5+ years' },
+  { label: 'Based in', value: 'Lahore, Pakistan' },
+  { label: 'Remote', value: 'Worldwide' },
+  { label: 'Onsite', value: 'Lahore, Islamabad, UAE, Saudi Arabia' },
+  { label: 'Main tools', value: 'Flutter, Dart, BLoC, Firebase' },
+  { label: 'AI tools', value: 'Claude Code, Cursor' },
+  { label: 'Status', value: 'Available immediately' },
+];
+
+// Questions people ask. Each answer starts with the answer itself and stands on its own.
+// The same text feeds the visible FAQ section and the FAQ search data.
+export const faq = [
+  {
+    question: 'Who is Imran Ali Khan?',
+    answer:
+      'Imran Ali Khan is a senior Flutter developer from Lahore, Pakistan. He has 4.5+ years of experience building Android and iOS apps, including real estate CRMs, delivery apps, a sports academy app, and a SaaS app built from zero.',
+  },
+  {
+    question: 'Is Imran available to hire?',
+    answer:
+      'Yes. Imran can start right away. He works remotely for clients worldwide, and he is also open to onsite work in Lahore, Islamabad, the UAE, and Saudi Arabia.',
+  },
+  {
+    question: 'What kind of apps does Imran build?',
+    answer:
+      'He builds mobile apps with Flutter and Dart for Android and iOS. His work includes CRM apps, delivery and driver apps, a sports and gaming academy app, and a SaaS product. He has shipped 17+ apps to the Play Store and App Store.',
+  },
+  {
+    question: 'Which tools does Imran use?',
+    answer:
+      'He uses Flutter, Dart, BLoC, Provider, Riverpod, Firebase, REST APIs, and Google Maps. For releases he uses the Play Store, TestFlight, and Shorebird for fast updates.',
+  },
+  {
+    question: 'How does Imran use AI in his work?',
+    answer:
+      'He uses AI tools like Claude Code and Cursor, with careful prompts, for the routine parts of coding. He plans the design himself, reads every line the AI writes, and tests on real devices before anything ships.',
+  },
+  {
+    question: 'How can I contact Imran?',
+    answer:
+      'Email imranalikhan878@gmail.com, message him on WhatsApp at +92 333 9837704, or connect with him on LinkedIn.',
   },
 ];

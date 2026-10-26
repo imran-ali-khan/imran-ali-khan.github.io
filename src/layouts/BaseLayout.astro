@@ -7,15 +7,22 @@ import '@/styles/global.css';
 interface Props {
   title?: string;
   description?: string;
+  noindex?: boolean;
+  isHome?: boolean;
 }
 
-const { title, description } = Astro.props;
+const { title, description, noindex = false, isHome = false } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <Seo title={title} description={description} />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+    <Seo title={title} description={description} noindex={noindex} isHome={isHome} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -47,6 +54,29 @@ const { title, description } = Astro.props;
       );
 
       document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+    </script>
+
+    <script>
+      // 3D tilt with a light that follows the cursor. Off for touch screens and reduced motion.
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const canHover = window.matchMedia('(hover: hover)').matches;
+
+      if (!reduceMotion && canHover) {
+        document.querySelectorAll<HTMLElement>('[data-tilt]').forEach((el) => {
+          const max = Number(el.dataset.tilt) || 6;
+          el.addEventListener('pointermove', (e) => {
+            const r = el.getBoundingClientRect();
+            const x = (e.clientX - r.left) / r.width;
+            const y = (e.clientY - r.top) / r.height;
+            el.style.setProperty('--mx', `${x * 100}%`);
+            el.style.setProperty('--my', `${y * 100}%`);
+            el.style.transform = `perspective(900px) rotateX(${(0.5 - y) * max * 2}deg) rotateY(${(x - 0.5) * max * 2}deg) translateY(-3px)`;
+          });
+          el.addEventListener('pointerleave', () => {
+            el.style.transform = '';
+          });
+        });
+      }
     </script>
   </body>
 </html>

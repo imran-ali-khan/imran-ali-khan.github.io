@@ -28,6 +28,8 @@ export type CaseStudy = {
   result: string;
   tech: string[];
   links?: StoreLinks;
+  // A real store screenshot, stored in /public/apps. Shown under the tags.
+  image?: { src: string; alt: string };
 };
 
 export const caseStudies: CaseStudy[] = [
@@ -53,6 +55,62 @@ export const caseStudies: CaseStudy[] = [
     result:
       'Shipped a working SaaS product with deep linking and password reset running reliably in production, deployed to the Play Store and TestFlight, with Shorebird wired up for fast over-the-air releases.',
     tech: ['Flutter', 'Dart', 'BLoC', 'Provider', 'Dio', 'Deep Linking', 'Shorebird', 'Claude Code', 'Prompt Engineering'],
+  },
+  {
+    slug: 'rrr-arena',
+    name: 'RRR Arena',
+    tagline: 'A sports and gaming academy app, in English and Arabic',
+    role: 'Flutter Developer',
+    product: 'An app where people find academies, join tournaments, read articles, watch videos, and shop for gear.',
+    problem:
+      'People who train in martial arts and gaming had no single place to find an academy, see tournaments, and sign up. The app also had to work well in English and in Arabic.',
+    approach: [
+      'Built the belts feature from start to finish, on the app and on the backend, and connected it to onboarding and profile editing.',
+      'Added polls, a map location feature, and the tournament leaderboard.',
+      'Fixed Apple sign-in and the Google sign-in setup on iPhone.',
+      'Fixed push notifications, including a problem on newer Android phones (see below).',
+      'Handled the Android and iOS release work: permissions, signing keys, and version updates.',
+    ],
+    architecture:
+      'Clean Architecture with MVVM. Riverpod for state, get_it for dependency injection, go_router for navigation, Dio for the API, and easy_localization for English and Arabic text.',
+    challenge:
+      'Some Android users never got push notifications, and there was no error. Firebase did not always match the real Android permission, so the permission box sometimes never showed and the phone was never registered for pushes. I now ask for and check the permission through the Android notifications plugin, and I save the token again every time the home screen opens.',
+    result:
+      'Live on the Play Store and the App Store, with academies, tournaments, an explore feed, a store, and full Arabic support.',
+    tech: ['Flutter', 'Riverpod', 'go_router', 'Firebase', 'Google Maps', 'Dio', 'Arabic and RTL'],
+    links: {
+      playStore: 'https://play.google.com/store/apps/details?id=com.vga.rrrarena',
+      appStore: 'https://apps.apple.com/us/app/rrrarena/id6749176887',
+    },
+    image: { src: 'apps/rrr-home.webp', alt: 'RRR Arena home screen' },
+  },
+  {
+    slug: 'deliverix',
+    name: 'DeliveriX',
+    tagline: 'Two delivery apps: one for customers and one for drivers',
+    role: 'Flutter Developer',
+    product: 'A customer app to place and follow deliveries, and a driver app to take jobs, drive, and track earnings.',
+    problem:
+      'A customer waits for a driver while drivers get offers, drive, and earn. Two apps have to agree on the state of every order, all the time.',
+    approach: [
+      'Split the project into two Flutter apps, one for users and one for drivers, and built the driver app screens and features.',
+      'Connected the driver app to the live backend, with earnings, notifications, and job offers.',
+      'Added Firebase push notifications, social sign-in, Google Maps directions, and account deletion.',
+      'Built the live "searching for a driver" screen, past orders with paging, and wallet transactions.',
+      'Made sign-in safer: Kuwait phone number checks, OTP codes, and a clean log out when a session ends or is turned off.',
+      'Added crash reporting and tests.',
+    ],
+    architecture:
+      'Two apps built the same way: Riverpod for state, go_router for navigation, get_it for dependency injection, Dio for the API, live updates over websockets, and English and Arabic text.',
+    challenge:
+      'While a customer waits, both apps must show the same order state, even when a driver search fails and starts again. Phone sign-in codes and driver GPS also needed fixes after real testing.',
+    result: 'Both apps are live on the Play Store and the App Store, with orders, a wallet, and live driver tracking.',
+    tech: ['Flutter', 'Riverpod', 'go_router', 'Firebase', 'Google Maps', 'Websockets', 'Crashlytics'],
+    links: {
+      playStore: 'https://play.google.com/store/apps/details?id=com.vga.deliveryx',
+      appStore: 'https://apps.apple.com/us/app/deliverix-user/id6748141981',
+    },
+    image: { src: 'apps/cards/deliverix-user-1.webp', alt: 'DeliveriX customer app, place an order screen' },
   },
   {
     slug: 'bjs-workforce',
@@ -144,29 +202,61 @@ export const caseStudies: CaseStudy[] = [
       playStore: 'https://play.google.com/store/apps/details?id=com.huntandharrisre.erpapp&hl=en',
       appStore: 'https://apps.apple.com/us/app/hunt-and-harris-re/id6468483431',
     },
+    image: { src: 'apps/hh-dashboard.webp', alt: 'Hunt and Harris RE dashboard screen' },
+  },
+  {
+    slug: 'amr',
+    name: 'AMR',
+    tagline: 'A home and event services app with vendors and products',
+    role: 'Flutter Developer',
+    product: 'An app to book home and event services and buy products from different vendors.',
+    problem:
+      'Customers wanted to find services for an event, compare vendors, and order, all in one app, in English and Arabic.',
+    approach: [
+      'Worked on the service and category screens, and the "select event type" screen.',
+      'Built the consultation API, the forgot password flow, and guest mode.',
+      'Updated how order status is shown.',
+      'Fixed bugs from QA and made the app faster, and fixed the Play Store release problem.',
+    ],
+    architecture:
+      'Riverpod for state, go_router for navigation, get_it for dependency injection, Dio for the API, and Firebase for push notifications. The code is split by feature: auth, services, products, vendors, cart, orders, and loyalty.',
+    challenge:
+      'Guest mode means every screen has to work for signed-in users and for guests, and ask for sign-in only when it is really needed.',
+    result: 'Live on the Play Store and the App Store.',
+    tech: ['Flutter', 'Riverpod', 'go_router', 'Dio', 'Firebase', 'Arabic and English'],
+    links: {
+      playStore: 'https://play.google.com/store/apps/details?id=com.vga.amr',
+      appStore: 'https://apps.apple.com/us/app/amr-%D8%A2%D9%85%D8%B1/id6766049292',
+    },
+    image: { src: 'apps/amr-events.webp', alt: 'AMR app, select event type screen' },
   },
 ];
 
-// Every other published app, shown as a compact "also shipped" grid.
-// Descriptions are kept minimal and factual; no assumptions beyond what
-// the app name/store listing itself makes clear.
+// Every other published app, shown as a card with one real store screenshot,
+// a title, and a short plain description. Images live in /public/apps/cards.
 export type ShippedApp = {
   name: string;
-  category?: string;
+  description: string;
+  image?: string;
   links: StoreLinks;
 };
 
+const shot = (slug: string) => `apps/cards/${slug}-1.webp`;
+
 export const shipped: ShippedApp[] = [
   {
-    name: 'Fire Kirin Guide',
-    category: 'Static guide app for tips, rewards, and Firestore-backed support',
+    name: 'RRR Arena',
+    description: 'A sports and gaming academy app with academies, tournaments, articles, videos, and a store.',
+    image: shot('rrr-arena'),
     links: {
-      playStore: 'https://play.google.com/store/apps/details?id=com.firekirin.guide',
+      playStore: 'https://play.google.com/store/apps/details?id=com.vga.rrrarena',
+      appStore: 'https://apps.apple.com/us/app/rrrarena/id6749176887',
     },
   },
   {
     name: 'Sure CRM',
-    category: 'Real estate CRM · Dubai',
+    description: 'A real estate CRM for agents in Dubai. Manage leads, listings, and your daily schedule.',
+    image: shot('sure-crm'),
     links: {
       playStore: 'https://play.google.com/store/apps/details?id=com.app.sureCrm&hl=en',
       appStore: 'https://apps.apple.com/us/app/sure-crm/id6743427892',
@@ -174,7 +264,8 @@ export const shipped: ShippedApp[] = [
   },
   {
     name: 'Creative Homes CRM',
-    category: 'Real estate CRM · Dubai',
+    description: 'A real estate CRM for Dubai agents. Track leads, tasks, and your schedule in one app.',
+    image: shot('creative-homes-crm'),
     links: {
       playStore: 'https://play.google.com/store/apps/details?id=com.creativehomes.crmapp',
       appStore: 'https://apps.apple.com/us/app/creative-homes-crm/id6468985460',
@@ -182,7 +273,8 @@ export const shipped: ShippedApp[] = [
   },
   {
     name: 'GPG Global CRM',
-    category: 'Real estate CRM · Dubai',
+    description: 'A real estate CRM for Dubai teams. Handle leads, listings, and viewings from one dashboard.',
+    image: shot('gpg-global-crm'),
     links: {
       playStore: 'https://play.google.com/store/apps/details?id=com.app.gpgGlobalCrm',
       appStore: 'https://apps.apple.com/us/app/gpg-global-crm/id6743427839',
@@ -190,14 +282,16 @@ export const shipped: ShippedApp[] = [
   },
   {
     name: 'Stanford Properties CRM',
-    category: 'Real estate CRM',
+    description: 'A real estate CRM with a dashboard, leads, and company listings for the sales team.',
+    image: shot('stanford-properties-crm'),
     links: {
       playStore: 'https://play.google.com/store/apps/details?id=com.stanford.crmapp.stanford_properties_crm_mobile',
     },
   },
   {
     name: 'Doted Driver',
-    category: 'Driver app · signatures & background location tracking',
+    description: 'An app for drivers. Follow tickets, collect signatures, and share live location in the background.',
+    image: shot('doted-driver'),
     links: {
       playStore: 'https://play.google.com/store/apps/details?id=com.dotedco.dotedDriver',
       appStore: 'https://apps.apple.com/app/doted-driver/id6739454766',
@@ -205,7 +299,8 @@ export const shipped: ShippedApp[] = [
   },
   {
     name: 'DeliveriX User App',
-    category: 'Delivery platform',
+    description: 'Place a delivery order in seconds, then follow your driver on the map until it arrives.',
+    image: shot('deliverix-user'),
     links: {
       playStore: 'https://play.google.com/store/apps/details?id=com.vga.deliveryx',
       appStore: 'https://apps.apple.com/us/app/deliverix-user/id6748141981',
@@ -213,42 +308,50 @@ export const shipped: ShippedApp[] = [
   },
   {
     name: 'DeliveriX Driver App',
-    category: 'Delivery platform',
+    description: 'An app for delivery drivers. See your jobs, follow each step on the map, and track your earnings.',
+    image: shot('deliverix-driver'),
     links: {
       playStore: 'https://play.google.com/store/apps/details?id=com.vga.deliverix.driver',
       appStore: 'https://apps.apple.com/us/app/deliverix-driver/id6748141427',
     },
   },
   {
-    name: 'AllOut',
-    category: 'Trips & adventures · UAE',
-    links: {
-      playStore: 'https://play.google.com/store/apps/details?id=com.AllOut.app',
-    },
-  },
-  {
     name: 'CarHelp',
+    description: 'A car help app that connects drivers with service vendors. Compare vendors, order, and track the order.',
+    image: shot('carhelp'),
     links: {
       playStore: 'https://play.google.com/store/apps/details?id=com.vga.carhelp',
       appStore: 'https://apps.apple.com/us/app/car-help-%D9%83%D8%A7%D8%B1-%D9%87%D9%8A%D9%84%D8%A8/id6755152556',
     },
   },
   {
-    name: 'RRR Arena',
-    links: {
-      playStore: 'https://play.google.com/store/apps/details?id=com.vga.rrrarena',
-      appStore: 'https://apps.apple.com/us/app/rrrarena/id6749176887',
-    },
-  },
-  {
     name: 'AMR',
+    description: 'A home and event services app. Pick a service, choose your event type, and book it.',
+    image: 'apps/amr-events.webp',
     links: {
       playStore: 'https://play.google.com/store/apps/details?id=com.vga.amr',
       appStore: 'https://apps.apple.com/us/app/amr-%D8%A2%D9%85%D8%B1/id6766049292',
     },
   },
   {
+    name: 'AllOut',
+    description: 'Find trips and activities across the UAE, with a map to see what is nearby.',
+    image: shot('allout'),
+    links: {
+      playStore: 'https://play.google.com/store/apps/details?id=com.AllOut.app',
+    },
+  },
+  {
+    name: 'Fire Kirin Guide',
+    description: 'A guide app with tips and strategies for players, with a Firestore-backed support section.',
+    image: shot('fire-kirin-guide'),
+    links: {
+      playStore: 'https://play.google.com/store/apps/details?id=com.firekirin.guide',
+    },
+  },
+  {
     name: 'Klick',
+    description: 'A mobile app on Google Play.',
     links: {
       playStore: 'https://play.google.com/store/apps/details?id=com.klick.app',
     },

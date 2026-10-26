@@ -1,0 +1,33 @@
+# Imran Ali Khan
+
+> Imran Ali Khan is a senior Flutter developer in Lahore, Pakistan with 4.5+ years of experience building Android and iOS apps. He works remotely for clients worldwide and is also open to onsite work in Lahore, Islamabad, the UAE, and Saudi Arabia. He is available immediately.
+
+## Key facts
+
+- Role: Senior Flutter Developer
+- Experience: 4.5+ years, three companies (BJS Soft Solutions, Senarios, ISKAAN Tech)
+- Main tools: Flutter, Dart, BLoC, Provider, Riverpod, Firebase, REST APIs, Clean Architecture
+- AI tools: Claude Code and Cursor, with careful prompts. He reviews every line and tests on real devices.
+- Apps shipped: 17+ on the Play Store and App Store
+- Education: BS (Hons.) Software Engineering, The University of Haripur, 2017 to 2021
+
+## Pages
+
+- [Portfolio](https://imran-ali-khan.github.io/): experience, real app screens, case studies, skills, and answers to common questions
+- [Resume (PDF)](https://imran-ali-khan.github.io/imran-ali-khan-flutter-developer.pdf): full work history
+
+## Work he has done
+
+- RRR Arena: sports and gaming academy app with academies, tournaments, articles, videos, and a store
+- Hunt & Harris RE: Dubai real estate CRM with property management and permission-based modules
+- Stovoo: food delivery app with customer, rider, and restaurant roles in one codebase
+- ISKAAN Tech: a SaaS product built from zero, plus upgrades to several live real estate CRM apps
+- Senarios: offline-first storage, server sync, and real-time messaging
+- BJS Soft Solutions: moved Windows products to Flutter, with hardware control through platform channels
+
+## Contact
+
+- Email: imranalikhan878@gmail.com
+- WhatsApp: https://wa.me/923339837704
+- LinkedIn: https://linkedin.com/in/imran-ali--khan
+- GitHub: https://github.com/imran-ali-khan

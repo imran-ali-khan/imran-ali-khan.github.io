@@ -1,0 +1,204 @@
+---
+import { showcaseSteps } from '@/data/showcase';
+import { appImages } from '@/data/appImages';
+import StoreLinks from '@/components/StoreLinks.astro';
+
+const base = import.meta.env.BASE_URL;
+const turns = ['-14deg', '0deg', '14deg'];
+---
+
+<div class="mt-16 border-t border-ink-800 pt-16" aria-labelledby="showcase-heading">
+  <div class="reveal max-w-2xl">
+    <p class="section-label">Real screens</p>
+    <h3 id="showcase-heading" class="mt-3 text-2xl font-semibold text-ink-50 sm:text-3xl">
+      Real screens from apps I shipped
+    </h3>
+    <p class="mt-3 text-ink-400">
+      These are screenshots from the App Store. Scroll down and the phone changes screens as you move through each app.
+    </p>
+  </div>
+
+  <div class="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-[400px_1fr] lg:gap-16">
+    <!-- Sticky phone, only on large screens -->
+    <div class="sticky-wrap hidden lg:block" aria-hidden="true">
+      <div class="phone" id="showcase-phone">
+        <div class="screen">
+          {
+            showcaseSteps.map((step, i) => (
+              <div class={`layer${i === 0 ? ' on' : ''}${step.drawStatusBar ? ' pad' : ''}`} data-i={i}>
+                <img
+                  src={`${base}${step.shot.src}`}
+                  alt=""
+                  width={appImages[step.shot.src].w}
+                  height={appImages[step.shot.src].h}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <ol class="m-0 list-none p-0">
+      {
+        showcaseSteps.map((step, i) => (
+          <li class={`step${i === 0 ? ' on' : ''}`} data-i={i} data-turn={turns[i]}>
+            <!-- Phone picture for small screens, where the sticky phone is hidden -->
+            <div class="mobile-shot lg:hidden">
+              <img
+                src={`${base}${step.shot.src}`}
+                alt={step.shot.alt}
+                width={appImages[step.shot.src].w}
+                height={appImages[step.shot.src].h}
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <span class="font-mono text-2xs uppercase tracking-[0.15em] text-signal">
+              {String(i + 1).padStart(2, '0')} / {step.app}
+            </span>
+            <h4 class="text-2xl font-semibold tracking-tight text-ink-50">{step.title}</h4>
+            <p class="max-w-md leading-relaxed text-ink-300">{step.text}</p>
+            <div class="flex flex-wrap gap-2">
+              {step.tags.map((t) => (
+                <span class="tag">{t}</span>
+              ))}
+            </div>
+            {step.links && <StoreLinks links={step.links} name={step.app} />}
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</div>
+
+<style>
+  .sticky-wrap {
+    position: sticky;
+    top: 110px;
+    height: 560px;
+    display: grid;
+    place-items: center;
+    perspective: 1400px;
+    align-self: start;
+  }
+  .phone {
+    width: 250px;
+    height: 510px;
+    border-radius: 44px;
+    background: #07080b;
+    padding: 9px;
+    position: relative;
+    transform: rotateY(var(--ry, -14deg)) rotateX(6deg);
+    transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow:
+      0 0 0 2px #2b303b inset,
+      0 0 0 1px #000,
+      0 50px 90px -30px rgba(56, 189, 248, 0.45),
+      0 25px 50px rgba(0, 0, 0, 0.65);
+  }
+  .screen {
+    position: absolute;
+    inset: 9px;
+    border-radius: 36px;
+    overflow: hidden;
+    background: #0e1117;
+  }
+  .layer {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.5s;
+  }
+  .layer.on {
+    opacity: 1;
+  }
+  .layer img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    display: block;
+  }
+  /* Some store screenshots have no phone status bar, so we draw one. */
+  .layer.pad {
+    background: #fff;
+    padding-top: 38px;
+  }
+  .layer.pad::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    width: 72px;
+    height: 21px;
+    border-radius: 12px;
+    background: #000;
+    transform: translateX(-50%);
+    z-index: 2;
+  }
+  .layer.pad img {
+    height: calc(100% - 38px);
+  }
+
+  .step {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    justify-content: center;
+    padding: 2rem 0;
+  }
+  .mobile-shot {
+    width: 180px;
+    border-radius: 28px;
+    overflow: hidden;
+    border: 6px solid #07080b;
+    box-shadow: 0 0 0 1px #2b303b, 0 24px 50px -24px rgba(56, 189, 248, 0.45);
+  }
+  .mobile-shot img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  @media (min-width: 1024px) {
+    .step {
+      min-height: 76vh;
+      opacity: 0.35;
+      transition: opacity 0.4s;
+    }
+    .step.on {
+      opacity: 1;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .phone,
+    .layer,
+    .step {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const steps = Array.from(document.querySelectorAll<HTMLElement>('.step'));
+  const layers = Array.from(document.querySelectorAll<HTMLElement>('.layer'));
+  const phone = document.getElementById('showcase-phone');
+
+  if (steps.length && phone) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const index = Number((entry.target as HTMLElement).dataset.i);
+          steps.forEach((s) => s.classList.toggle('on', s === entry.target));
+          layers.forEach((l) => l.classList.toggle('on', Number(l.dataset.i) === index));
+          phone.style.setProperty('--ry', (entry.target as HTMLElement).dataset.turn || '0deg');
+        });
+      },
+      { rootMargin: '-45% 0px -45% 0px' }
+    );
+    steps.forEach((s) => observer.observe(s));
+  }
+</script>

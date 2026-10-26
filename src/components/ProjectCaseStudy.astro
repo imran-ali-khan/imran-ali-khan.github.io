@@ -1,6 +1,7 @@
 ---
 import type { CaseStudy } from '@/data/projects';
 import StoreLinks from '@/components/StoreLinks.astro';
+import { appImages } from '@/data/appImages';
 
 interface Props {
   project: CaseStudy;
@@ -8,6 +9,8 @@ interface Props {
 }
 
 const { project, index } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const picture = project.image ? appImages[project.image.src] : undefined;
 const reversed = index % 2 === 1;
 ---
 
@@ -58,6 +61,21 @@ const reversed = index % 2 === 1;
         <span class="tag">{t}</span>
       ))}
     </div>
+
+    {
+      project.image && picture && (
+        <div class="shot-frame mt-8">
+          <img
+            src={`${base}${project.image.src}`}
+            alt={project.image.alt}
+            width={picture.w}
+            height={picture.h}
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      )
+    }
   </div>
 
   <div class:list={[reversed && 'lg:order-1']}>
@@ -96,3 +114,23 @@ const reversed = index % 2 === 1;
     </div>
   </div>
 </article>
+
+<style>
+  .shot-frame {
+    width: 210px;
+    height: 300px;
+    overflow: hidden;
+    border-radius: 24px 24px 0 0;
+    border: 1px solid #22262e;
+    border-bottom: 0;
+    background: #0f1217;
+    box-shadow: 0 30px 60px -30px rgba(56, 189, 248, 0.35);
+    -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent);
+    mask-image: linear-gradient(to bottom, #000 70%, transparent);
+  }
+  .shot-frame img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+</style>

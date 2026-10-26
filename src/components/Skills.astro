@@ -1,5 +1,12 @@
 ---
 import { skillGroups } from '@/data/skills';
+import TechIcon from '@/components/TechIcon.astro';
+
+const icons: Record<string, 'flutter' | 'android' | 'ios'> = {
+  Flutter: 'flutter',
+  'Android Deployment': 'android',
+  'iOS Deployment': 'ios',
+};
 ---
 
 <section id="skills" class="section py-20 sm:py-28" aria-labelledby="skills-heading">
@@ -9,18 +16,18 @@ import { skillGroups } from '@/data/skills';
       Technical toolkit
     </h2>
     <p class="mt-4 text-ink-400">
-      Organized by what it's used for, not ranked by percentage. These are technologies actually used in shipped, production work.
+      Grouped by what each tool is used for. I do not rank skills with percentages. Every tool here was used in real apps.
     </p>
   </div>
 
-  <div class="mt-14 grid grid-cols-1 gap-px overflow-hidden rounded-xl border border-ink-800 bg-ink-800 sm:grid-cols-2 lg:grid-cols-4">
+  <div class="mt-14 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" style="perspective: 1400px;">
     {
       skillGroups.map((group, i) => (
-        <div class="reveal card-hover bg-ink-950 p-6" style={`animation-delay: ${i * 60}ms`}>
+        <div class="reveal tilt rounded-2xl border border-ink-800 bg-ink-900/50 p-6" data-tilt="5" style={`animation-delay: ${i * 60}ms`}>
           <h3 class="font-mono text-2xs uppercase tracking-[0.15em] text-signal">{group.category}</h3>
           <ul class="mt-4 flex flex-wrap gap-2">
             {group.items.map((item) => (
-              <li class="tag">{item}</li>
+              <li class="tag">{icons[item] && <TechIcon name={icons[item]} size={12} class="mr-1.5" />}{item}</li>
             ))}
           </ul>
         </div>

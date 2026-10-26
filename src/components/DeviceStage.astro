@@ -1,0 +1,275 @@
+---
+import { heroShots } from '@/data/showcase';
+import { appImages } from '@/data/appImages';
+
+const base = import.meta.env.BASE_URL;
+const slots = [
+  { cls: 's1', shot: heroShots.left },
+  { cls: 's2', shot: heroShots.center },
+  { cls: 's3', shot: heroShots.right },
+] as const;
+---
+
+<div class="stage" id="stage" role="group" aria-label="Screens from three apps: AMR, RRR Arena, and Hunt and Harris RE">
+  <!-- Soft rings behind the phones, only for looks -->
+  <div class="ring ring-a" aria-hidden="true"></div>
+  <div class="ring ring-b" aria-hidden="true"></div>
+
+  <div class="rig" id="rig">
+    {
+      slots.map(({ cls, shot }) => {
+        const size = appImages[shot.src];
+        return (
+          <div class={`slot ${cls}`} style={`--accent: ${shot.accent}`}>
+            <div class="float">
+              <div class="phone">
+                <div class={`screen${shot.drawStatusBar ? ' pad' : ''}`}>
+                  <img
+                    src={`${base}${shot.src}`}
+                    alt={shot.alt}
+                    width={size.w}
+                    height={size.h}
+                    decoding="async"
+                    fetchpriority={cls === 's2' ? 'high' : 'auto'}
+                  />
+                </div>
+              </div>
+              <div class="chip">
+                <span class="dot" />
+                <span class="name">{shot.app}</span>
+                <span class="kind">{shot.kind}</span>
+              </div>
+            </div>
+          </div>
+        );
+      })
+    }
+  </div>
+</div>
+
+<style>
+  .stage {
+    position: relative;
+    height: 590px;
+    perspective: 1500px;
+  }
+
+  .ring {
+    position: absolute;
+    left: 50%;
+    top: 46%;
+    border-radius: 50%;
+    border: 1px solid rgba(56, 189, 248, 0.16);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .ring-a {
+    width: 440px;
+    height: 440px;
+    animation: spin 40s linear infinite;
+    border-style: dashed;
+  }
+  .ring-b {
+    width: 600px;
+    height: 600px;
+    border-color: rgba(129, 140, 248, 0.12);
+    animation: spin 70s linear infinite reverse;
+  }
+  @keyframes spin {
+    to {
+      transform: translate(-50%, -50%) rotate(360deg);
+    }
+  }
+
+  .rig {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transition: transform 0.18s ease-out;
+  }
+  .slot {
+    position: absolute;
+    transform-style: preserve-3d;
+    animation: rise 1s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  }
+  .float {
+    transform-style: preserve-3d;
+    animation: float 7s ease-in-out infinite;
+  }
+  .s1 {
+    left: 0;
+    top: 70px;
+    transform: translateZ(-90px) rotateY(26deg) rotateZ(-5deg) scale(0.88);
+    animation-delay: 0.15s;
+  }
+  .s2 {
+    left: 50%;
+    top: 10px;
+    margin-left: -125px;
+    transform: translateZ(60px);
+  }
+  .s3 {
+    right: 0;
+    top: 80px;
+    transform: translateZ(-90px) rotateY(-26deg) rotateZ(5deg) scale(0.88);
+    animation-delay: 0.3s;
+  }
+  .s1 .float {
+    animation-delay: -2s;
+  }
+  .s3 .float {
+    animation-delay: -4s;
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      margin-top: 80px;
+    }
+  }
+  @keyframes float {
+    50% {
+      transform: translateY(-14px);
+    }
+  }
+
+  .phone {
+    width: 250px;
+    height: 510px;
+    border-radius: 44px;
+    background: #07080b;
+    padding: 9px;
+    position: relative;
+    box-shadow:
+      0 0 0 2px #2b303b inset,
+      0 0 0 1px #000,
+      0 50px 90px -30px color-mix(in srgb, var(--accent) 55%, transparent),
+      0 25px 50px rgba(0, 0, 0, 0.65);
+  }
+  .screen {
+    position: absolute;
+    inset: 9px;
+    border-radius: 36px;
+    overflow: hidden;
+    background: #0e1117;
+  }
+  .screen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    display: block;
+  }
+  /* Some store screenshots have no phone status bar, so we draw one. */
+  .screen.pad {
+    background: #fff;
+    padding-top: 38px;
+  }
+  .screen.pad::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    width: 72px;
+    height: 21px;
+    border-radius: 12px;
+    background: #000;
+    transform: translateX(-50%);
+    z-index: 2;
+  }
+  .screen.pad img {
+    height: calc(100% - 38px);
+  }
+
+  /* App name tag under each phone */
+  .chip {
+    position: absolute;
+    left: 50%;
+    bottom: -26px;
+    transform: translateX(-50%) translateZ(50px);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: rgba(17, 19, 24, 0.78);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 12px 30px -12px rgba(0, 0, 0, 0.8);
+    font-size: 12px;
+  }
+  /* Side tags sit toward the outside so the middle phone does not cover them. */
+  .s1 .chip {
+    left: 4px;
+    transform: translateZ(50px);
+  }
+  .s3 .chip {
+    left: auto;
+    right: 4px;
+    transform: translateZ(50px);
+  }
+  .s1 .kind,
+  .s3 .kind {
+    display: none;
+  }
+  .chip .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+  }
+  .chip .name {
+    font-weight: 600;
+    color: #f5f6f8;
+  }
+  .chip .kind {
+    color: #9aa1ac;
+  }
+
+  @media (max-width: 1023px) {
+    .stage {
+      height: 560px;
+      margin-top: 1rem;
+    }
+  }
+  @media (max-width: 640px) {
+    .s1,
+    .s3 {
+      display: none;
+    }
+    .ring-b {
+      display: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .slot,
+    .float,
+    .ring {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const canHover = window.matchMedia('(hover: hover)').matches;
+  const stage = document.getElementById('stage');
+  const rig = document.getElementById('rig');
+
+  if (stage && rig && !reduceMotion && canHover) {
+    stage.addEventListener('pointermove', (e) => {
+      const r = stage.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      rig.style.setProperty('--ry', `${x * 18}deg`);
+      rig.style.setProperty('--rx', `${-y * 10}deg`);
+    });
+    stage.addEventListener('pointerleave', () => {
+      rig.style.setProperty('--ry', '0deg');
+      rig.style.setProperty('--rx', '0deg');
+    });
+  }
+</script>

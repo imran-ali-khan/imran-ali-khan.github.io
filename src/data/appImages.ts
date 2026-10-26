@@ -1,0 +1,22 @@
+// Generated from the store screenshots. Width and height stop the page from jumping while images load.
+export const appImages: Record<string, { w: number; h: number }> = {
+  'apps/amr-login.webp': { w: 520, h: 1126 },
+  'apps/amr-events.webp': { w: 520, h: 1126 },
+  'apps/cards/allout-1.webp': { w: 340, h: 605 },
+  'apps/cards/amr-1.webp': { w: 340, h: 736 },
+  'apps/cards/carhelp-1.webp': { w: 340, h: 736 },
+  'apps/cards/creative-homes-crm-1.webp': { w: 340, h: 605 },
+  'apps/cards/deliverix-driver-1.webp': { w: 340, h: 737 },
+  'apps/cards/deliverix-user-1.webp': { w: 340, h: 737 },
+  'apps/cards/doted-driver-1.webp': { w: 340, h: 737 },
+  'apps/cards/fire-kirin-guide-1.webp': { w: 340, h: 757 },
+  'apps/cards/gpg-global-crm-1.webp': { w: 340, h: 737 },
+  'apps/cards/rrr-arena-1.webp': { w: 340, h: 736 },
+  'apps/cards/stanford-properties-crm-1.webp': { w: 340, h: 729 },
+  'apps/cards/sure-crm-1.webp': { w: 340, h: 737 },
+  'apps/hh-dashboard.webp': { w: 520, h: 924 },
+  'apps/hh-listings.webp': { w: 520, h: 924 },
+  'apps/rrr-academies.webp': { w: 520, h: 1126 },
+  'apps/rrr-explore.webp': { w: 520, h: 1126 },
+  'apps/rrr-home.webp': { w: 520, h: 1126 },
+};
