@@ -20,7 +20,7 @@ const turns = ['-14deg', '0deg', '14deg'];
 
   <div class="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-[400px_1fr] lg:gap-16">
     <!-- Sticky phone, only on large screens -->
-    <div class="sticky-wrap hidden lg:block" aria-hidden="true">
+    <div class="sticky-wrap" aria-hidden="true">
       <div class="phone" id="showcase-phone">
         <div class="screen">
           {
@@ -76,13 +76,18 @@ const turns = ['-14deg', '0deg', '14deg'];
 
 <style>
   .sticky-wrap {
-    position: sticky;
-    top: 110px;
-    height: 560px;
-    display: grid;
-    place-items: center;
-    perspective: 1400px;
-    align-self: start;
+    display: none;
+  }
+  @media (min-width: 1024px) {
+    .sticky-wrap {
+      position: sticky;
+      top: 110px;
+      height: 560px;
+      display: grid;
+      place-items: center;
+      perspective: 1400px;
+      align-self: start;
+    }
   }
   .phone {
     width: 250px;
@@ -165,11 +170,12 @@ const turns = ['-14deg', '0deg', '14deg'];
   @media (min-width: 1024px) {
     .step {
       min-height: 76vh;
-      opacity: 0.35;
-      transition: opacity 0.4s;
+      padding-left: 1.5rem;
+      border-left: 2px solid #1c2028;
+      transition: border-color 0.4s;
     }
     .step.on {
-      opacity: 1;
+      border-left-color: #38bdf8;
     }
   }
   @media (prefers-reduced-motion: reduce) {

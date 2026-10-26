@@ -27,8 +27,8 @@ const [headlineStart, headlineEnd] = profile.heroHeadline.split(profile.heroHigh
 
   <div class="section grid grid-cols-1 items-center gap-6 pb-16 sm:pb-24 lg:grid-cols-[1.05fr_1fr]">
     <div>
-      <div class="reveal flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-300">
-        <span class="relative flex h-2 w-2">
+      <div class="enter flex items-start gap-2.5 text-sm text-ink-300">
+        <span class="relative mt-1.5 flex h-2 w-2 flex-shrink-0">
           <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-signal opacity-60"></span>
           <span class="relative inline-flex h-2 w-2 rounded-full bg-signal"></span>
         </span>
@@ -37,17 +37,17 @@ const [headlineStart, headlineEnd] = profile.heroHeadline.split(profile.heroHigh
 
       <h1
         id="hero-heading"
-        class="reveal mt-6 max-w-3xl text-4xl font-semibold leading-[1.1] tracking-tight text-ink-50 sm:text-5xl lg:text-[3.4rem]"
+        class="enter mt-6 max-w-3xl text-4xl font-semibold leading-[1.1] tracking-tight text-ink-50 sm:text-5xl lg:text-[3.4rem]"
         style="animation-delay: 60ms;"
       >
         {headlineStart}<span class="text-gradient">{profile.heroHighlight}</span>{headlineEnd}
       </h1>
 
-      <p class="reveal mt-6 max-w-xl text-lg leading-relaxed text-ink-300" style="animation-delay: 120ms;">
+      <p class="enter mt-6 max-w-xl text-lg leading-relaxed text-ink-300" style="animation-delay: 120ms;">
         {profile.heroSubline}
       </p>
 
-      <div class="reveal mt-9 flex flex-col gap-3 sm:flex-row" style="animation-delay: 180ms;">
+      <div class="enter mt-9 flex flex-col gap-3 sm:flex-row" style="animation-delay: 180ms;">
         <a href="#projects" class="btn-primary">
           View my work
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -57,7 +57,7 @@ const [headlineStart, headlineEnd] = profile.heroHeadline.split(profile.heroHigh
         </a>
       </div>
 
-      <div class="reveal mt-8 flex flex-wrap items-center gap-2.5" style="animation-delay: 200ms;" aria-label="Platforms I build for">
+      <div class="enter mt-8 flex flex-wrap items-center gap-2.5" style="animation-delay: 200ms;" aria-label="Platforms I build for">
         <span class="inline-flex items-center gap-2 rounded-full border border-ink-700 bg-ink-900/60 px-3.5 py-1.5 text-sm text-ink-100">
           <TechIcon name="flutter" size={18} /> Flutter
         </span>
@@ -69,11 +69,11 @@ const [headlineStart, headlineEnd] = profile.heroHeadline.split(profile.heroHigh
         </span>
       </div>
 
-      <p class="reveal mt-6 max-w-xl text-sm leading-relaxed text-ink-400" style="animation-delay: 220ms;">
+      <p class="enter mt-6 max-w-xl text-sm leading-relaxed text-ink-400" style="animation-delay: 220ms;">
         {profile.workModes}
       </p>
 
-      <div class="reveal mt-10 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-ink-800 pt-6 text-sm text-ink-400" style="animation-delay: 260ms;">
+      <div class="enter mt-10 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-ink-800 pt-6 text-sm text-ink-400" style="animation-delay: 260ms;">
         <span class="font-mono text-2xs uppercase tracking-[0.15em] text-ink-500">Core stack</span>
         <span>Dart</span>
         <span>Clean Architecture</span>

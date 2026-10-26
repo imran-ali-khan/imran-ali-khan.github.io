@@ -39,22 +39,22 @@ export const caseStudies: CaseStudy[] = [
     tagline: 'New SaaS platform, architected and built end to end at ISKAAN Tech',
     role: 'Software Engineer (Flutter)',
     company: 'ISKAAN Tech',
-    product: 'A new SaaS product built from a blank repository, with the architecture, auth flows, and integrations all owned end to end.',
+    product: 'A new SaaS product built from a blank repository, with the architecture and the integrations owned end to end.',
     problem:
-      'ISKAAN needed a new SaaS product with no existing codebase to build on, which meant every architectural decision, from state management to deep linking, had to be made and justified from day one.',
+      'ISKAAN needed a new SaaS product with no existing codebase to build on. Every decision, from the folder structure to state management and the API layer, had to be made and explained from day one.',
     approach: [
       "Set up the app's architecture and project structure from scratch, settling on BLoC and Provider for state management.",
-      'Built the API layer on Dio, including deep linking and the password-reset flow.',
+      'Built the API layer on Dio and connected every part of the app to it.',
       'Leaned on AI coding tools like Claude Code and Cursor, guided by careful prompt engineering, to move faster through the mechanical parts of the build and spend more time on architecture and requirements.',
       'Turned wireframes and design guidelines into responsive UI screens, keeping the experience consistent across Android and iOS.',
     ],
     architecture:
-      'A feature-first structure with a Dio-based API layer, and BLoC or Provider for the modules that needed predictable state transitions, like auth, password reset, and deep-linked flows.',
+      'A feature-first structure with a Dio-based API layer, and BLoC or Provider for the parts of the app that needed predictable state changes.',
     challenge:
-      "Deep linking and password-reset flows both need to interrupt the app's normal navigation stack correctly. Without a legacy codebase to reference, getting that right meant careful routing design up front, not trial and error.",
+      "With a blank repository there is no old code to copy. The structure, the state management choice, and the API layer all had to be right early, because every later screen depends on them.",
     result:
-      'Shipped a working SaaS product with deep linking and password reset running reliably in production, deployed to the Play Store and TestFlight, with Shorebird wired up for fast over-the-air releases.',
-    tech: ['Flutter', 'Dart', 'BLoC', 'Provider', 'Dio', 'Deep Linking', 'Shorebird', 'Claude Code', 'Prompt Engineering'],
+      'Shipped a working SaaS product to production on the Play Store and TestFlight, with Shorebird set up for fast over-the-air updates.',
+    tech: ['Flutter', 'Dart', 'BLoC', 'Provider', 'Dio', 'Shorebird', 'Claude Code', 'Prompt Engineering'],
   },
   {
     slug: 'rrr-arena',
@@ -104,10 +104,9 @@ export const caseStudies: CaseStudy[] = [
       'Two apps built the same way: Riverpod for state, go_router for navigation, get_it for dependency injection, Dio for the API, live updates over websockets, and English and Arabic text.',
     challenge:
       'While a customer waits, both apps must show the same order state, even when a driver search fails and starts again. Phone sign-in codes and driver GPS also needed fixes after real testing.',
-    result: 'Both apps are live on the Play Store and the App Store, with orders, a wallet, and live driver tracking.',
+    result: 'Both apps are on the App Store, and the driver app is also on Google Play, with orders, a wallet, and live driver tracking.',
     tech: ['Flutter', 'Riverpod', 'go_router', 'Firebase', 'Google Maps', 'Websockets', 'Crashlytics'],
     links: {
-      playStore: 'https://play.google.com/store/apps/details?id=com.vga.deliveryx',
       appStore: 'https://apps.apple.com/us/app/deliverix-user/id6748141981',
     },
     image: { src: 'apps/cards/deliverix-user-1.webp', alt: 'DeliveriX customer app, place an order screen' },
@@ -230,6 +229,60 @@ export const caseStudies: CaseStudy[] = [
     },
     image: { src: 'apps/amr-events.webp', alt: 'AMR app, select event type screen' },
   },
+  {
+    slug: 'kiddocanvas',
+    name: 'KiddoCanvas',
+    tagline: 'A calm coloring app for kids that parents can trust',
+    role: 'Flutter Developer (solo project)',
+    product: 'A coloring app where a child taps a picture to fill it with color.',
+    problem:
+      'A kids app has to be calm and safe: no ads, no tracking, and no way for a child to buy something by mistake.',
+    approach: [
+      'Built the coloring canvas, where one tap fills a shape with color, and a gallery that saves finished pictures on the phone.',
+      'Added picture packs like letters, animals, nature, and vehicles, with free and premium pages, plus puzzles and games.',
+      'Added a grown-up check before every purchase, and one purchase that unlocks everything, with in-app purchases.',
+      'Added session limits and a simple first-time guide for new users.',
+      'Made the gallery safe with a storage version number, and made it recover from a bad record. Wrote unit tests for the purchase and session logic.',
+      'Used real open line-art for the pictures, and shipped with no ads and no tracking.',
+    ],
+    architecture:
+      'Code split by feature. Riverpod for state, go_router for navigation, get_it for dependency injection, and Hive for storage on the device.',
+    challenge:
+      'A child must never buy something by mistake, and a saved drawing must never be lost. So every purchase sits behind a grown-up math check, and the gallery saves with a version number and can recover from a bad record.',
+    result: 'Released on Google Play, with no ads and no tracking.',
+    tech: ['Flutter', 'Riverpod', 'go_router', 'Hive', 'In-app purchases', 'Parental gate'],
+    links: {
+      playStore: 'https://play.google.com/store/apps/details?id=com.handyhive.kiddocanvas',
+    },
+    image: { src: 'apps/cards/kiddocanvas-1.webp', alt: 'KiddoCanvas app, coloring an elephant' },
+  },
+  {
+    slug: 'bodinar',
+    name: 'Bodinar',
+    tagline: 'A family shopping app in Arabic and English',
+    role: 'Flutter Developer',
+    product: 'A shopping app where families browse products, fill a cart, and check out.',
+    problem:
+      'The app had to feel local: Arabic first, an address form for Iraq, local prices, and sign-in with phone codes.',
+    approach: [
+      'Built and improved the home, search, product list, and product variant screens.',
+      'Built the checkout: an address form for Iraq, a web-style checkout, payment method badges, and an order summary that shows the coupon amount.',
+      'Made Arabic work well: Arabic digits in sign-in codes, a tab bar fix for Arabic, and local prices and currency.',
+      'Made layouts safe for big phone fonts, so size chips and screens do not break.',
+      'Cleared the old account data when someone switches accounts, and fixed the sign-up and forgot-password screens.',
+    ],
+    architecture:
+      'Code split by feature. Riverpod for state, go_router for navigation, get_it for dependency injection, Dio for the API, and easy_localization for Arabic and English.',
+    challenge:
+      'A shop has many small details that break in Arabic: numbers, tab bars, prices, and big phone fonts. Each one needed its own fix and its own testing.',
+    result: 'Live on the App Store and Google Play.',
+    tech: ['Flutter', 'Riverpod', 'go_router', 'Dio', 'Firebase', 'Arabic and RTL'],
+    links: {
+      playStore: 'https://play.google.com/store/apps/details?id=com.tocaan.bodinar&hl=en',
+      appStore: 'https://apps.apple.com/us/app/bodinar-%D8%A8%D9%88%D8%AF%D9%8A%D9%86%D8%A7%D8%B1/id6752568435',
+    },
+    image: { src: 'apps/cards/bodinar-1.webp', alt: 'Bodinar app, home screen with products' },
+  },
 ];
 
 // Every other published app, shown as a card with one real store screenshot,
@@ -251,6 +304,23 @@ export const shipped: ShippedApp[] = [
     links: {
       playStore: 'https://play.google.com/store/apps/details?id=com.vga.rrrarena',
       appStore: 'https://apps.apple.com/us/app/rrrarena/id6749176887',
+    },
+  },
+  {
+    name: 'Bodinar',
+    description: 'A family shopping app in Arabic and English. Browse categories, search and filter products, and check out.',
+    image: shot('bodinar'),
+    links: {
+      playStore: 'https://play.google.com/store/apps/details?id=com.tocaan.bodinar&hl=en',
+      appStore: 'https://apps.apple.com/us/app/bodinar-%D8%A8%D9%88%D8%AF%D9%8A%D9%86%D8%A7%D8%B1/id6752568435',
+    },
+  },
+  {
+    name: 'KiddoCanvas',
+    description: 'A coloring app for kids. Tap to fill a picture with color. No ads, no tracking, and a grown-up check before any purchase.',
+    image: shot('kiddocanvas'),
+    links: {
+      playStore: 'https://play.google.com/store/apps/details?id=com.handyhive.kiddocanvas',
     },
   },
   {
@@ -302,7 +372,6 @@ export const shipped: ShippedApp[] = [
     description: 'Place a delivery order in seconds, then follow your driver on the map until it arrives.',
     image: shot('deliverix-user'),
     links: {
-      playStore: 'https://play.google.com/store/apps/details?id=com.vga.deliveryx',
       appStore: 'https://apps.apple.com/us/app/deliverix-user/id6748141981',
     },
   },
@@ -347,13 +416,6 @@ export const shipped: ShippedApp[] = [
     image: shot('fire-kirin-guide'),
     links: {
       playStore: 'https://play.google.com/store/apps/details?id=com.firekirin.guide',
-    },
-  },
-  {
-    name: 'Klick',
-    description: 'A mobile app on Google Play.',
-    links: {
-      playStore: 'https://play.google.com/store/apps/details?id=com.klick.app',
     },
   },
 ];

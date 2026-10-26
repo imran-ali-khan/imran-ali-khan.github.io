@@ -7,7 +7,7 @@ export type Role = {
   company: string;
   title: string;
   start: string;
-  end: string; // 'Present' for current role
+  end: string; // use 'Present' for a role you still have
   location: string;
   summary: string;
   highlights: string[];
@@ -19,20 +19,20 @@ export const experience: Role[] = [
     company: 'ISKAAN Tech',
     title: 'Software Engineer, Flutter',
     start: 'Mar 2025',
-    end: 'Present',
+    end: '2026',
     location: 'Lahore, Pakistan',
     summary:
       'Led the redesign of live client CRM apps and built a new SaaS product from scratch, owning the architecture, integrations, and release management.',
     highlights: [
       'Led the redesign and refactor of several cross-platform real estate CRM apps, upgrading Flutter SDK versions and cleaning up code quality along the way.',
-      'Designed and built a new SaaS product from the ground up, handling architecture setup, API integrations, deep linking, and password-reset workflows using Dio.',
+      'Designed and built a new SaaS product from the ground up, handling the architecture setup and the API integrations with Dio.',
       'Set up state management with BLoC and Provider to keep the app logic scalable and easy to maintain.',
       'Used AI coding tools like Claude Code and Cursor, guided by careful prompt engineering, to move faster through implementation and spend more time on architecture and requirements.',
       'Built responsive UI screens straight from wireframes and design guidelines, keeping the experience consistent across Android and iOS.',
       'Managed deployments to the Play Store and TestFlight, and integrated Shorebird so releases could go out faster and safer.',
       'Worked in Agile teams: sprint planning, code reviews, and keeping the codebase healthy through testing and regular refactoring.',
     ],
-    tech: ['Flutter', 'Dart', 'BLoC', 'Provider', 'Dio', 'Shorebird', 'Deep Linking', 'Claude Code', 'Prompt Engineering'],
+    tech: ['Flutter', 'Dart', 'BLoC', 'Provider', 'Dio', 'Shorebird', 'Claude Code', 'Prompt Engineering'],
   },
   {
     company: 'Senarios Pvt Limited',

@@ -26,7 +26,7 @@ const parsed = achievements.map((item) => {
         <div class="reveal card-hover bg-ink-950 p-7" style={`animation-delay: ${i * 60}ms`}>
           <p class="font-mono text-3xl font-semibold text-signal sm:text-4xl">
             <span class="countup" data-target={item.target} data-decimals={item.decimals} data-suffix={item.suffix}>
-              0{item.suffix}
+              {item.value}
             </span>
           </p>
           <p class="mt-3 text-sm font-medium text-ink-100">{item.label}</p>
@@ -40,6 +40,13 @@ const parsed = achievements.map((item) => {
 <script>
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const counters = document.querySelectorAll<HTMLElement>('.countup');
+
+  // The page ships with the real numbers. With JavaScript on, they count up from zero.
+  if (!prefersReducedMotion) {
+    counters.forEach((el) => {
+      el.textContent = `0${el.dataset.suffix || ''}`;
+    });
+  }
 
   const animateCounter = (el: HTMLElement) => {
     const target = parseFloat(el.dataset.target || '0');

@@ -21,6 +21,9 @@
 - RRR Arena: sports and gaming academy app with academies, tournaments, articles, videos, and a store
 - Hunt & Harris RE: Dubai real estate CRM with property management and permission-based modules
 - Stovoo: food delivery app with customer, rider, and restaurant roles in one codebase
+- DeliveriX: two delivery apps, one for customers and one for drivers, with live driver tracking
+- Bodinar: a family shopping app in Arabic and English, with checkout and an address form for Iraq
+- KiddoCanvas: a coloring app for kids with no ads and no tracking, built as a solo project
 - ISKAAN Tech: a SaaS product built from zero, plus upgrades to several live real estate CRM apps
 - Senarios: offline-first storage, server sync, and real-time messaging
 - BJS Soft Solutions: moved Windows products to Flutter, with hardware control through platform channels

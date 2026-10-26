@@ -44,7 +44,7 @@ export const profile = {
     "I'm a Flutter developer based in Lahore with about four and a half years of experience and a degree in Software Engineering.",
     "I started at BJS Soft Solutions, migrating legacy Windows systems to Flutter and building workforce management apps for admin, manager, supervisor, and worker roles, with hardware control through platform channels.",
     "At Senarios, I moved deeper into architecture work: offline-first storage, syncing data with the server, and real-time messaging.",
-    "Most recently, at ISKAAN Tech, I built a SaaS product from scratch and upgraded several live CRM apps for clients in Dubai. The company downsized in 2025, which is why I'm available right away.",
+    "Most recently, at ISKAAN Tech, I built a SaaS product from scratch and upgraded several live CRM apps for clients in Dubai. The company downsized in 2026, which is why I'm available right away.",
     "For the last two years, I have used AI tools like Claude Code and Cursor to write the routine parts of the code. I guide them with clear prompts, and I check everything they write. This gives me more time to talk with the people who use the product and understand what they really need. That is why I enjoy roles where understanding the business matters as much as writing code.",
   ],
 
