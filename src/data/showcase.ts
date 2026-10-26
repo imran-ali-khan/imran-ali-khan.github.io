@@ -63,10 +63,10 @@ export const showcaseSteps: ShowcaseStep[] = [
   },
   {
     app: 'AMR',
-    title: 'Book home and event services',
-    text: 'A services app for homes and events. People sign in with their phone number and book from many vendors.',
+    title: 'Pick a service, see the price, book it',
+    text: 'A services app for homes and events. People browse services like wedding planning and birthday setups, see the price, and book from many vendors.',
     tags: ['Flutter', 'Riverpod', 'Firebase', 'Arabic and English'],
-    shot: { src: 'apps/amr-login.webp', alt: 'AMR app, sign in screen' },
+    shot: { src: 'apps/amr-services.webp', alt: 'AMR app, list of event services with prices' },
     drawStatusBar: false,
     links: amrLinks,
   },

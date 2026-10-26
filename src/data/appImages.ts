@@ -44,7 +44,7 @@ export const appImages: Record<string, { w: number; h: number }> = {
   'apps/fan/sure-crm-3.webp': { w: 300, h: 650 },
   'apps/cards/kiddocanvas-1.webp': { w: 340, h: 693 },
   'apps/cards/bodinar-1.webp': { w: 340, h: 739 },
-  'apps/amr-login.webp': { w: 520, h: 1126 },
+  'apps/amr-services.webp': { w: 520, h: 1126 },
   'apps/amr-events.webp': { w: 520, h: 1126 },
   'apps/cards/deliverix-user-1.webp': { w: 340, h: 737 },
   'apps/hh-dashboard.webp': { w: 520, h: 924 },
