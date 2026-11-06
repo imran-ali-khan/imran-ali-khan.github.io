@@ -45,3 +45,8 @@ export function puff(g: SVGGElement, x: number, y: number, colors = ['#FFC93C', 
     );
   }
 }
+
+export type FlowItem = { t: string; c?: 'b' | 'y' | 'g' | 'r' | 'n' };
+/** The same "box --> box" flow as Flow.astro, for text that changes while a scene runs. */
+export const flowHTML = (items: FlowItem[]) =>
+  `<ol class="flow">${items.map((it, i) => `${i ? '<li class="ar" aria-hidden="true">--&gt;</li>' : ''}<li class="fn ${it.c ?? 'b'}">${it.t}</li>`).join('')}</ol>`;

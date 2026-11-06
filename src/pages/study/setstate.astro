@@ -2,6 +2,8 @@
 import StudyLayout from '@/layouts/StudyLayout.astro';
 import Mascot from '@/components/study/Mascot.astro';
 import IsoStack from '@/components/study/IsoStack.astro';
+import Flow from '@/components/study/Flow.astro';
+import Src from '@/components/study/Src.astro';
 import pointer from '@/icons/lucide/pointer.svg?raw';
 import flag from '@/icons/lucide/flag.svg?raw';
 import timer from '@/icons/lucide/timer.svg?raw';
@@ -45,8 +47,11 @@ const labels = ['Start', 'Why', 'Trees', 'Journey', 'Batching', 'Compare', 'Reac
       <div class="panel">
         <h1>What happens when you call <em>setState()</em>?</h1>
         <p class="lead">A visual guide. Simple words.</p>
+        <div class="explain"><b>In simple words</b><p>setState() tells Flutter: my data changed, please redraw. This lesson shows how, one step at a time.</p></div>
+        <Flow label="The whole story" items={[{ t: 'setState()', c: 'y' }, { t: 'mark dirty', c: 'y' }, { t: 'wait for frame', c: 'n' }, { t: 'build', c: 'b' }, { t: 'compare', c: 'b' }, { t: 'draw', c: 'g' }]} />
         <div class="ctl"><button class="btn primary" id="start" type="button">Start &rarr;</button></div>
         <p class="cap" style="min-height:0;font-size:15px">Use the arrow keys, swipe, or the buttons below.</p>
+        <Src links={[{ label: 'State.setState', href: 'https://api.flutter.dev/flutter/widgets/State/setState.html' }]} />
       </div>
       <div class="scene"><IsoStack id="iso-intro" /></div>
     </section>
@@ -56,11 +61,15 @@ const labels = ['Start', 'Why', 'Trees', 'Journey', 'Batching', 'Compare', 'Reac
       <div class="panel">
         <p class="kick"><i>1</i>Why</p>
         <h2>Variables don't <em>redraw</em> the screen.</h2>
+        <div class="explain"><b>In simple words</b><p>A variable only lives in memory. Flutter does not watch it. So after it changes, you call setState() to say: please redraw.</p></div>
         <p class="cap" id="why-cap" aria-live="polite">Press count++.</p>
         <div class="ctl">
           <button class="btn" id="why-inc" type="button">count++</button>
           <button class="btn primary" id="why-set" type="button">setState()</button>
         </div>
+        <Flow label="Without setState" items={[{ t: 'count++', c: 'n' }, { t: 'memory changes', c: 'n' }, { t: 'screen stays old', c: 'r' }]} />
+        <Flow label="With setState" items={[{ t: 'setState()', c: 'y' }, { t: 'Flutter is told', c: 'y' }, { t: 'screen redraws', c: 'g' }]} />
+        <Src links={[{ label: 'State.setState', href: 'https://api.flutter.dev/flutter/widgets/State/setState.html' }]} />
       </div>
       <div class="scene">
         <svg viewBox="0 0 900 680" role="img" aria-label="A variable, a wire, a sleeping mascot, and a phone screen">
@@ -100,8 +109,11 @@ const labels = ['Start', 'Why', 'Trees', 'Journey', 'Batching', 'Compare', 'Reac
           <li style="--c:var(--yellow)"><i></i><span><b>Element</b> the manager. Keeps State.</span></li>
           <li style="--c:var(--mint)"><i></i><span><b>RenderObject</b> draws pixels.</span></li>
         </ul>
+        <div class="explain"><b>In simple words</b><p>Widgets only describe the screen, and they are cheap. Elements stay in place and keep your State. RenderObjects measure and draw.</p></div>
         <p class="cap" id="trees-cap" aria-live="polite">Press the button.</p>
         <div class="ctl"><button class="btn yellow" id="trees-go" type="button">Press setState()</button></div>
+        <Flow label="Who does what" items={[{ t: 'Widget: describes', c: 'b' }, { t: 'Element: manages + State', c: 'y' }, { t: 'RenderObject: layout + paint', c: 'g' }]} />
+        <Src links={[{ label: 'Architecture overview', href: 'https://docs.flutter.dev/resources/architectural-overview' }, { label: 'Element', href: 'https://api.flutter.dev/flutter/widgets/Element-class.html' }]} />
       </div>
       <div class="scene"><IsoStack id="iso-trees" bolt /></div>
     </section>
@@ -111,13 +123,15 @@ const labels = ['Start', 'Why', 'Trees', 'Journey', 'Batching', 'Compare', 'Reac
       <div class="panel">
         <p class="kick"><i>3</i>Behind the scenes</p>
         <h2>The journey of one <em>setState()</em>.</h2>
+        <div class="explain"><b>In simple words</b><p>One setState() goes through six stations. Your code does only the first. Flutter does the rest in the next frame.</p></div>
         <div class="result" id="j-box"><b id="j-num">1 / 6</b><p id="j-title"></p></div>
         <p class="cap" id="j-text" aria-live="polite"></p>
-        <pre class="code" id="j-code"></pre>
+        <div class="flowbox" id="j-flow"></div>
         <div class="ctl">
           <button class="btn" id="j-prev" type="button" aria-label="Previous station">&larr;</button>
           <button class="btn primary" id="j-next" type="button">Next &rarr;</button>
         </div>
+        <Src links={[{ label: 'markNeedsBuild', href: 'https://api.flutter.dev/flutter/widgets/Element/markNeedsBuild.html' }, { label: 'scheduleBuildFor', href: 'https://api.flutter.dev/flutter/widgets/BuildOwner/scheduleBuildFor.html' }, { label: 'buildScope', href: 'https://api.flutter.dev/flutter/widgets/BuildOwner/buildScope.html' }]} />
       </div>
       <div class="scene">
         <svg class="journey" id="journey" viewBox="0 0 560 680" role="img" aria-label="The six stations of a setState call">
@@ -126,7 +140,7 @@ const labels = ['Start', 'Why', 'Trees', 'Journey', 'Batching', 'Compare', 'Reac
             <path d={`M506 ${SY(2) - 36} h16 v${SY(5) - SY(2) + 72} h-16`} />
           </g>
           <text transform={`translate(548 ${(SY(0) + SY(1)) / 2}) rotate(90)`} text-anchor="middle" font-size="18" font-weight="900">NOW</text>
-          <text transform={`translate(548 ${(SY(2) + SY(5)) / 2}) rotate(90)`} text-anchor="middle" font-size="18" font-weight="900">NEXT FRAME (~16 ms)</text>
+          <text transform={`translate(548 ${(SY(2) + SY(5)) / 2}) rotate(90)`} text-anchor="middle" font-size="18" font-weight="900">NEXT FRAME</text>
           <line x1="110" y1={SY(0)} x2="110" y2={SY(5)} stroke="#1A1B3A" stroke-opacity="0.35" stroke-width="4" stroke-dasharray="1 12" stroke-linecap="round" />
           <line id="j-prog" x1="110" y1={SY(0)} x2="110" y2={SY(5)} stroke="#1A1B3A" stroke-width="6" stroke-linecap="round" />
           {
@@ -152,12 +166,15 @@ const labels = ['Start', 'Why', 'Trees', 'Journey', 'Batching', 'Compare', 'Reac
       <div class="panel">
         <p class="kick"><i>4</i>The wait</p>
         <h2>Many calls. <em>One</em> rebuild.</h2>
+        <div class="explain"><b>In simple words</b><p>An Element that is already dirty is not marked again. Flutter builds each dirty Element once per frame. So extra calls in the same frame cost almost nothing.</p></div>
         <p class="cap" id="b-cap" aria-live="polite">The first call raises a flag. The rest see: already dirty.</p>
         <div class="stats">
           <div class="stat"><span>setState calls</span><b id="b-calls">0</b></div>
           <div class="stat"><span>build() runs</span><b id="b-builds">0</b></div>
         </div>
         <div class="ctl"><button class="btn yellow" id="b-go" type="button">Call it 5 times</button></div>
+        <Flow label="Five calls, one build" items={[{ t: 'setState() x5', c: 'y' }, { t: '1st: mark dirty', c: 'y' }, { t: '2nd to 5th: already dirty', c: 'n' }, { t: 'next frame', c: 'n' }, { t: 'build() x1', c: 'g' }]} />
+        <Src links={[{ label: 'setState (idempotent)', href: 'https://api.flutter.dev/flutter/widgets/State/setState.html' }, { label: 'markNeedsBuild', href: 'https://api.flutter.dev/flutter/widgets/Element/markNeedsBuild.html' }]} />
       </div>
       <div class="scene">
         <svg viewBox="0 0 900 680" role="img" aria-label="Five setState calls fall into one dirty list, then one frame runs build once">
@@ -176,7 +193,7 @@ const labels = ['Start', 'Why', 'Trees', 'Journey', 'Batching', 'Compare', 'Reac
           <g id="b-late">
             {[1, 2, 3, 4].map((i) => <text class="late" data-i={i} x={150 + i * 150} y="238" text-anchor="middle" font-size="19" font-weight="900" fill="#d63a3a" opacity="0">already dirty</text>)}
           </g>
-          <text x="450" y="500" text-anchor="middle" font-size="24" font-weight="900" fill="#53557E">next frame (about 16 ms)</text>
+          <text x="450" y="500" text-anchor="middle" font-size="24" font-weight="900" fill="#53557E">next frame</text>
           <rect x="150" y="516" width="600" height="38" rx="19" fill="#F3F4FF" stroke="#1A1B3A" stroke-width="4" />
           <rect id="b-fill" x="154" y="520" width="0" height="30" rx="15" fill="#5B7CFF" />
           <g id="b-done" opacity="0" transform="translate(450 625)">
@@ -192,6 +209,7 @@ const labels = ['Start', 'Why', 'Trees', 'Journey', 'Batching', 'Compare', 'Reac
       <div class="panel">
         <p class="kick"><i>5</i>The key step</p>
         <h2><em>Reuse</em> or <em>recreate</em>?</h2>
+        <div class="explain"><b>In simple words</b><p>build() gives new widgets. For each spot, Flutter compares old and new. Same widget: skip. Same type and key: reuse the Element. Anything else: a new Element.</p></div>
         <p class="cap" id="c-cap">Pick a new widget:</p>
         <div class="seg">
           <button class="btn" id="c-skip" type="button">const (same object)</button>
@@ -199,9 +217,31 @@ const labels = ['Start', 'Why', 'Trees', 'Journey', 'Batching', 'Compare', 'Reac
           <button class="btn warn" id="c-recreate" type="button">Different type</button>
         </div>
         <div class="result" id="c-result"><b>Result</b><p>Pick one.</p></div>
-        <pre class="code">canUpdate(old, new) =&gt;
-  old.runtimeType == new.runtimeType &amp;&amp;
-  old.key == new.key;</pre>
+<svg class="chart" id="c-chart" viewBox="0 0 340 256" role="img" aria-label="Flow chart: new widget. Same object? yes: skip. No: same type and key? yes: reuse the Element. No: recreate it.">
+          <defs><marker id="ch-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#1A1B3A" /></marker></defs>
+          <g class="ln" id="ch-l0"><path d="M110 32 V54" /></g>
+          <g class="ln" id="ch-l1y"><path d="M172 80 H204" /></g>
+          <g class="ln" id="ch-l1n"><path d="M110 104 V132" /></g>
+          <g class="ln" id="ch-l2y"><path d="M172 158 H204" /></g>
+          <g class="ln" id="ch-l2n"><path d="M110 182 V208" /></g>
+          <rect class="nd" id="ch-start" x="48" y="4" width="124" height="28" rx="14" />
+          <text x="110" y="23" text-anchor="middle">new widget</text>
+          <path class="nd" id="ch-q1" d="M110 56 L172 80 L110 104 L48 80Z" />
+          <text x="110" y="78" text-anchor="middle">same</text><text x="110" y="92" text-anchor="middle">object?</text>
+          <path class="nd" id="ch-q2" d="M110 134 L172 158 L110 182 L48 158Z" />
+          <text x="110" y="156" text-anchor="middle">same type</text><text x="110" y="170" text-anchor="middle">+ key?</text>
+          <rect class="nd o-skip" id="ch-skip" x="206" y="62" width="128" height="36" rx="10" />
+          <text x="270" y="85" text-anchor="middle">SKIP</text>
+          <rect class="nd o-reuse" id="ch-reuse" x="206" y="140" width="128" height="36" rx="10" />
+          <text x="270" y="163" text-anchor="middle">REUSE</text>
+          <rect class="nd o-recreate" id="ch-recreate" x="48" y="210" width="124" height="36" rx="10" />
+          <text x="110" y="233" text-anchor="middle">RECREATE</text>
+          <text class="yn" x="188" y="72" text-anchor="middle">yes</text>
+          <text class="yn" x="124" y="122">no</text>
+          <text class="yn" x="188" y="150" text-anchor="middle">yes</text>
+          <text class="yn" x="124" y="200">no</text>
+        </svg>
+        <Src links={[{ label: 'updateChild', href: 'https://api.flutter.dev/flutter/widgets/Element/updateChild.html' }, { label: 'Widget.canUpdate', href: 'https://api.flutter.dev/flutter/widgets/Widget/canUpdate.html' }]} />
       </div>
       <div class="scene">
         <svg viewBox="0 0 900 680" role="img" aria-label="A mascot called Element compares an old widget with a new widget">
@@ -259,6 +299,7 @@ const labels = ['Start', 'Why', 'Trees', 'Journey', 'Batching', 'Compare', 'Reac
           <button class="btn" id="r-a" type="button" aria-pressed="true">State in HomePage</button>
           <button class="btn" id="r-b" type="button" aria-pressed="false">State in CounterBox</button>
         </div>
+        <div class="explain"><b>In simple words</b><p>setState() rebuilds the State's own Element and everything below it. Parents and siblings are not touched. So keep setState low, in a small widget.</p></div>
         <label class="check"><input type="checkbox" id="r-const" /> Header and Footer are <code>const</code></label>
         <div class="ctl"><button class="btn yellow" id="r-go" type="button">Call setState()</button></div>
         <div class="stats">
@@ -267,6 +308,8 @@ const labels = ['Start', 'Why', 'Trees', 'Journey', 'Batching', 'Compare', 'Reac
           <div class="stat"><span>untouched</span><b id="r-n3">0</b></div>
         </div>
         <div class="result" id="r-verdict"><b>Result</b><p>Press the button.</p></div>
+        <Flow label="How far it goes" items={[{ t: 'setState()', c: 'y' }, { t: 'this Element dirty', c: 'y' }, { t: 'rebuild down only', c: 'b' }, { t: 'const widgets skipped', c: 'n' }, { t: 'parents untouched', c: 'g' }]} />
+        <Src links={[{ label: 'Performance best practices', href: 'https://docs.flutter.dev/perf/best-practices' }, { label: 'InheritedWidget', href: 'https://api.flutter.dev/flutter/widgets/InheritedWidget-class.html' }]} />
       </div>
       <div class="scene tint">
         <div class="reach" id="reach"></div>
@@ -278,7 +321,9 @@ const labels = ['Start', 'Why', 'Trees', 'Journey', 'Batching', 'Compare', 'Reac
       <div class="panel">
         <p class="kick"><i>7</i>Recap</p>
         <h2>The <em>answers</em>.</h2>
-        <p class="cap">That is the whole idea. Mark, wait, build, compare, draw.</p>
+        <div class="explain"><b>In simple words</b><p>build() makes new widgets again and again. An Element is recreated only if the type or key changes. Keys keep State with the right widget when items move.</p></div>
+        <Flow label="1. What rebuilds?" items={[{ t: 'setState()', c: 'y' }, { t: 'Element dirty', c: 'y' }, { t: 'next frame', c: 'n' }, { t: 'build()', c: 'b' }, { t: 'updateChild()', c: 'b' }, { t: 'draw changes', c: 'g' }]} />
+        <Flow label="2. Reuse or recreate?" items={[{ t: 'build()', c: 'b' }, { t: 'new widgets', c: 'b' }, { t: 'same type + key?', c: 'y' }, { t: 'yes: reuse', c: 'g' }, { t: 'no: recreate', c: 'r' }]} />
         <details class="say">
           <summary>Interview answer (1 minute)</summary>
           <p id="say-text">{interview}</p>
@@ -288,6 +333,7 @@ const labels = ['Start', 'Why', 'Trees', 'Journey', 'Batching', 'Compare', 'Reac
           <button class="btn" id="again" type="button">Start again</button>
         </div>
         <p class="cap" id="copy-note" style="min-height:0;font-size:15px" aria-live="polite"></p>
+        <Src links={[{ label: 'State lifecycle', href: 'https://api.flutter.dev/flutter/widgets/State-class.html' }, { label: 'Keys', href: 'https://api.flutter.dev/flutter/foundation/Key-class.html' }, { label: 'Element', href: 'https://api.flutter.dev/flutter/widgets/Element-class.html' }]} />
       </div>
       <div class="scene">
         <div class="cards" id="cards">

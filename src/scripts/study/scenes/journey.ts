@@ -1,13 +1,13 @@
 import { gsap } from 'gsap';
-import { q, qa, swap, reduce, type SceneInit } from '../util';
+import { q, qa, swap, reduce, flowHTML, type FlowItem, type SceneInit } from '../util';
 
-const info = [
-  { t: 'setState() is called', x: 'Your code changes a value.', c: 'setState(() => count++);' },
-  { t: 'Mark', x: 'The Element raises a flag and joins the dirty list.', c: '_dirty = true;\nowner.scheduleBuildFor(this);' },
-  { t: 'Wait', x: 'Flutter waits for the next frame. Many calls, one build.', c: '// next VSync, about 16 ms\ndrawFrame();' },
-  { t: 'Build', x: 'Only dirty Elements. Parents first.', c: 'buildScope();\nelement.rebuild();  // your build()' },
-  { t: 'Compare', x: 'New widget vs old widget: skip, reuse or recreate.', c: 'updateChild(old, new);' },
-  { t: 'Draw', x: 'Only changed values get layout and paint.', c: 'flushLayout();\nflushPaint();\ncompositeFrame();' },
+const info: { t: string; x: string; f: FlowItem[] }[] = [
+  { t: 'setState() is called', x: 'Your code changes a value.', f: [{ t: 'setState(fn)', c: 'y' }, { t: 'fn() runs now', c: 'n' }, { t: 'markNeedsBuild()', c: 'y' }] },
+  { t: 'Mark', x: 'The Element raises a flag and joins the dirty list.', f: [{ t: 'markNeedsBuild()', c: 'y' }, { t: '_dirty = true', c: 'y' }, { t: 'scheduleBuildFor()', c: 'y' }, { t: 'dirty list', c: 'y' }] },
+  { t: 'Wait', x: 'Flutter waits for the next frame. Many calls, one build.', f: [{ t: 'dirty list', c: 'y' }, { t: 'wait for next frame', c: 'n' }, { t: 'drawFrame()', c: 'b' }] },
+  { t: 'Build', x: 'Only dirty Elements, in depth order. Parents first.', f: [{ t: 'buildScope()', c: 'b' }, { t: 'dirty Elements, parents first', c: 'y' }, { t: 'rebuild()', c: 'b' }, { t: 'your build()', c: 'b' }] },
+  { t: 'Compare', x: 'New widget vs old widget: skip, reuse or recreate.', f: [{ t: 'build() returns new widgets', c: 'b' }, { t: 'updateChild()', c: 'b' }, { t: 'skip / reuse / recreate', c: 'y' }] },
+  { t: 'Draw', x: 'Render objects that need it get layout and paint.', f: [{ t: 'Element.update()', c: 'y' }, { t: 'RenderObject updated', c: 'g' }, { t: 'layout', c: 'g' }, { t: 'paint', c: 'g' }, { t: 'screen', c: 'g' }] },
 ];
 
 const init: SceneInit = (root) => {
@@ -38,7 +38,7 @@ const init: SceneInit = (root) => {
     q('#j-num', root).textContent = `${i + 1} / ${info.length}`;
     swap(q('#j-title', root), info[i].t);
     swap(q('#j-text', root), info[i].x);
-    q('#j-code', root).textContent = info[i].c;
+    swap(q('#j-flow', root), flowHTML(info[i].f));
     prev.disabled = i === 0;
     next.disabled = i === info.length - 1;
   }

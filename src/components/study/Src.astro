@@ -1,0 +1,12 @@
+---
+// Links to the official Flutter docs that back up an act.
+interface Props {
+  links: { label: string; href: string }[];
+}
+const { links } = Astro.props;
+---
+
+<p class="src">
+  <span>Flutter docs:</span>
+  {links.map((l) => <a href={l.href} target="_blank" rel="noopener noreferrer">{l.label}</a>)}
+</p>

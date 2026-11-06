@@ -7,7 +7,7 @@ type Kind = 'skip' | 'reuse' | 'recreate';
 const copy: Record<Kind, { t: string; x: string; cls: string }> = {
   skip: { t: 'Skip', x: 'Same object. Nothing runs.', cls: 'ok' },
   reuse: { t: 'Reuse', x: 'Same type and key. Element and State are kept.', cls: 'ok' },
-  recreate: { t: 'Recreate', x: 'Type changed. Old Element disposed. State lost.', cls: 'bad' },
+  recreate: { t: 'Recreate', x: 'Type or key changed. Old Element is removed. State is lost.', cls: 'bad' },
 };
 
 const init: SceneInit = (root) => {
@@ -34,6 +34,8 @@ const init: SceneInit = (root) => {
   const cap = q('#c-cap', root);
   const btns = ['skip', 'reuse', 'recreate'].map((k) => q<HTMLButtonElement>(`#c-${k}`, root));
   let tl: gsap.core.Timeline | null = null;
+  const chart = q('#c-chart', root);
+  const hit = (...ids: string[]) => ids.forEach((id) => q(`#ch-${id}`, chart).classList.add('hit'));
 
   function reset(label = "Text('5')") {
     tl?.kill();
@@ -54,6 +56,7 @@ const init: SceneInit = (root) => {
     stateT.textContent = 'taps = 3';
     screen.textContent = '5';
     puffG.innerHTML = '';
+    chart.querySelectorAll('.hit').forEach((e) => e.classList.remove('hit'));
   }
 
   function run(kind: Kind) {
@@ -74,16 +77,20 @@ const init: SceneInit = (root) => {
       .to(nw, { x: 200, duration: 0.9, ease: E })
       .call(() => m.look(-26, -8))
       .fromTo(bubble, { opacity: 0, y: 262 }, { opacity: 1, y: 250, duration: 0.4, ease: 'back.out(2.5)' }, '+=0.2')
+      .call(() => hit('start', 'l0', 'q1'))
       .call(() => swap(cap, 'Flutter asks: <b>' + (kind === 'skip' ? 'same object?' : 'same type? same key?') + '</b>'));
 
     if (kind === 'skip') {
       tl.to(ok1, { opacity: 1, duration: 0.3 }, '+=0.4')
+        .call(() => hit('l1y', 'skip'))
         .call(() => m.nod())
         .to(nw, { y: 330, opacity: 0, duration: 0.7, ease: E }, '+=0.2')
         .to(bubble, { opacity: 0, duration: 0.3 }, '<');
     } else if (kind === 'reuse') {
       tl.to(ok1, { opacity: 1, duration: 0.3 }, '+=0.4')
+        .call(() => hit('l1n', 'q2'))
         .to(ok2, { opacity: 1, duration: 0.3 }, '+=0.35')
+        .call(() => hit('l2y', 'reuse'))
         .call(() => m.nod())
         .to(state, { scale: 1.12, duration: 0.2, yoyo: true, repeat: 1, transformOrigin: '50% 50%' }, '<')
         .to(old, { x: 330, y: 20, rotation: 22, opacity: 0, duration: 0.8, ease: 'power3.in' }, '+=0.15')
@@ -92,6 +99,7 @@ const init: SceneInit = (root) => {
         .call(() => { screen.textContent = '6'; pop(screen, 0.5); }, [], '-=0.3');
     } else {
       tl.to(no1, { opacity: 1, duration: 0.3 }, '+=0.4')
+        .call(() => hit('l1n', 'q2', 'l2n', 'recreate'))
         .call(() => m.shake())
         .to(bubble, { opacity: 0, duration: 0.3 }, '+=0.5')
         .call(() => swap(cap, 'The old Element <b>leaves</b>. State is lost.'))
@@ -109,7 +117,7 @@ const init: SceneInit = (root) => {
       const c = copy[kind];
       result.className = `result ${c.cls}`;
       result.innerHTML = `<b>${c.t}</b><p>${c.x}</p>`;
-      swap(cap, c.x);
+      swap(cap, 'Follow the blue path in the chart.');
       m.look(0, 0);
     });
   }

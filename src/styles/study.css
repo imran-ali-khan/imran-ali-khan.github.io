@@ -162,6 +162,8 @@ body.study h3 {
 .panel {
   align-self: center;
   display: grid;
+  grid-auto-rows: max-content;
+  align-content: start;
   gap: 16px;
   min-width: 0;
   max-height: 100%;
@@ -207,7 +209,7 @@ body.study h3 {
   }
   .panel {
     align-self: stretch;
-    max-height: 44vh;
+    max-height: 46vh;
     gap: 12px;
   }
 }
@@ -763,4 +765,147 @@ details.say p {
   .dots button {
     transition: none;
   }
+}
+
+/* ---------- Explanations, flow diagrams, doc links ---------- */
+.explain {
+  padding: 12px 16px 14px;
+  border-radius: 20px;
+  background: #fff8dc;
+  border: 3px solid var(--ink);
+}
+.explain b {
+  display: block;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8a6400;
+}
+.explain p {
+  margin: 4px 0 0;
+  font-size: clamp(15px, 1.3vw, 17px);
+  line-height: 1.4;
+  font-weight: 700;
+}
+.flowbox {
+  min-width: 0;
+}
+.flowlabel {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mut);
+}
+.flow {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 4px;
+}
+.fn {
+  padding: 5px 10px;
+  border-radius: 12px;
+  border: 3px solid var(--ink);
+  background: color-mix(in srgb, var(--c, var(--blue)) 30%, #fff);
+  font-family: var(--mono);
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1.25;
+  font-variant-ligatures: none;
+}
+.fn.b {
+  --c: var(--blue);
+}
+.fn.y {
+  --c: var(--yellow);
+}
+.fn.g {
+  --c: var(--mint);
+}
+.fn.r {
+  --c: var(--coral);
+}
+.fn.n {
+  --c: #b2aec8;
+}
+.ar {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--ink);
+  font-variant-ligatures: none;
+}
+.src {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--mut);
+}
+.src a {
+  color: var(--blue-d);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+}
+.src a:hover {
+  color: var(--ink);
+}
+
+/* flow chart (Compare) */
+.chart {
+  width: 100%;
+  max-width: 360px;
+  height: auto;
+}
+.chart .ln path {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 3;
+  stroke-linecap: round;
+  marker-end: url(#ch-arrow);
+  transition: stroke 0.25s;
+}
+.chart .ln.hit path {
+  stroke: var(--blue);
+  stroke-width: 4.5;
+}
+.chart .nd {
+  fill: #fff;
+  stroke: var(--ink);
+  stroke-width: 3;
+  transition: fill 0.25s;
+}
+.chart text {
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 900;
+  fill: var(--ink);
+}
+.chart .yn {
+  font-size: 11px;
+  fill: var(--mut);
+}
+.chart .nd.hit {
+  fill: var(--yellow);
+}
+.chart .nd.o-skip.hit {
+  fill: #d4d6ec;
+}
+.chart .nd.o-reuse.hit {
+  fill: #b4c2ff;
+}
+.chart .nd.o-recreate.hit {
+  fill: #ffb3a8;
 }

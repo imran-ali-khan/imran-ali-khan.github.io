@@ -77,6 +77,7 @@ export function initDeck() {
     }
     if (!reduce && prev >= 0) {
       gsap.from(incoming.querySelectorAll('.panel > *'), { y: 22, opacity: 0, duration: 0.6, ease: 'power3.out', stagger: 0.06, delay: 0.3, clearProps: 'transform,opacity' });
+      gsap.from(incoming.querySelectorAll('.flow > li'), { opacity: 0, y: 10, duration: 0.45, ease: 'power3.out', stagger: 0.06, delay: 0.8, clearProps: 'transform,opacity' });
       gsap.from(incoming.querySelector('.scene'), { scale: 0.96, duration: 0.7, ease: 'power3.out', delay: 0.2, clearProps: 'transform' });
     }
 

@@ -1,0 +1,26 @@
+---
+// A flow diagram in a line: boxes joined by "-->". Used in the side panel of every act.
+interface Item {
+  t: string;
+  c?: 'b' | 'y' | 'g' | 'r' | 'n';
+}
+interface Props {
+  items: Item[];
+  label?: string;
+}
+const { items, label } = Astro.props;
+---
+
+<div class="flowbox">
+  {label && <p class="flowlabel">{label}</p>}
+  <ol class="flow">
+    {
+      items.map((it, i) => (
+        <>
+          {i > 0 && <li class="ar" aria-hidden="true">{'-->'}</li>}
+          <li class={`fn ${it.c ?? 'b'}`}>{it.t}</li>
+        </>
+      ))
+    }
+  </ol>
+</div>
