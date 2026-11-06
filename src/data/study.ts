@@ -11,20 +11,18 @@ export type Episode = {
 
 export const seriesName = 'Flutter Under the Hood';
 
-export const seriesIntro =
-  'Visual, step by step lessons on what Flutter really does behind the scenes. Simple words, flow diagrams, and things you can click.';
+export const seriesIntro = 'Short visual lessons on what Flutter does behind the scenes. Simple words. Things you can click.';
 
 export const episodes: Episode[] = [
   {
     slug: 'setstate',
     number: 1,
-    title: 'What really happens when you call setState()?',
-    summary:
-      'From the first idea to the last pixel: what triggers a rebuild, which parts of the tree rebuild, and the difference between build() running and an Element being recreated.',
+    title: 'What happens when you call setState()?',
+    summary: 'What triggers a rebuild, what gets rebuilt, and build() vs a new Element.',
     questions: [
-      'What exactly triggers a rebuild, and which parts of the widget tree get rebuilt?',
-      'Does setState() rebuild the whole app, the whole screen, or only one subtree? What is the difference between build() being called and an Element being recreated?',
+      'What triggers a rebuild? Which widgets rebuild?',
+      'Whole app, whole screen, or a subtree?',
     ],
-    slides: 19,
+    slides: 8,
   },
 ];

@@ -1,0 +1,83 @@
+---
+// Three layers in isometric projection: Widgets on top, Elements in the middle, RenderObjects at the bottom.
+// Flat colours, ink outlines. The scenes pull the layers apart with GSAP.
+interface Props {
+  id: string;
+  labels?: boolean;
+  bolt?: boolean;
+}
+
+const { id, labels = true, bolt = false } = Astro.props;
+
+const S = 160; // side of the square in local units
+const w = 140; // half width of the rhombus
+const h = 78; // half height of the rhombus
+const t = 18; // thickness of a slab
+const cx = 185;
+const ink = '#1A1B3A';
+const surface = `matrix(${w / S} ${h / S} ${-w / S} ${h / S}`;
+
+const layers = [
+  { id: 'widget', name: 'Widget tree', note: 'the blueprint', cy: 118, top: '#5B7CFF', left: '#3550C9', right: '#4768F0', tile: '#B4C2FF', tiles: ['Text', 'Column', 'Button', 'Padding'] },
+  { id: 'element', name: 'Element tree', note: 'the manager', cy: 243, top: '#FFC93C', left: '#C99A15', right: '#E8B52C', tile: '#FFE79A', tiles: ['E1', 'E2', 'E3', 'E4'] },
+  { id: 'render', name: 'RenderObject tree', note: 'draws pixels', cy: 368, top: '#3DDC97', left: '#1FA46C', right: '#2EC283', tile: '#B0F2D3', tiles: ['', '', '', ''] },
+];
+const pos = [
+  [20, 20],
+  [92, 20],
+  [20, 92],
+  [92, 92],
+];
+---
+
+<svg id={id} viewBox={`0 0 ${labels ? 560 : 390} 470`} role="img" aria-label="Three layers: the Widget tree on top, the Element tree in the middle, and the RenderObject tree at the bottom">
+  <g stroke={ink} stroke-opacity="0.35" stroke-width="1.5" stroke-dasharray="4 6" fill="none">
+    <line x1={cx - w} y1={layers[0].cy} x2={cx - w} y2={layers[2].cy + t} />
+    <line x1={cx + w} y1={layers[0].cy} x2={cx + w} y2={layers[2].cy + t} />
+    <line x1={cx} y1={layers[0].cy - h} x2={cx} y2={layers[2].cy - h} />
+  </g>
+  {
+    layers.map((l) => (
+      <g class={`iso-layer l-${l.id}`}>
+        <polygon points={`${cx - w},${l.cy} ${cx},${l.cy + h} ${cx},${l.cy + h + t} ${cx - w},${l.cy + t}`} fill={l.left} stroke={ink} stroke-width="2.5" stroke-linejoin="round" />
+        <polygon points={`${cx},${l.cy + h} ${cx + w},${l.cy} ${cx + w},${l.cy + t} ${cx},${l.cy + h + t}`} fill={l.right} stroke={ink} stroke-width="2.5" stroke-linejoin="round" />
+        <polygon points={`${cx},${l.cy - h} ${cx + w},${l.cy} ${cx},${l.cy + h} ${cx - w},${l.cy}`} fill={l.top} stroke={ink} stroke-width="2.5" stroke-linejoin="round" />
+        <g transform={`${surface} ${cx} ${l.cy - h})`}>
+          {l.tiles.map((label, k) => {
+            const [u, v] = pos[k];
+            if (l.id === 'element') {
+              const hot = k === 1;
+              return (
+                <g class="tile tl-element">
+                  <ellipse cx={u + 24} cy={v + 24} rx="27" ry="27" fill={hot ? ink : l.tile} stroke={ink} stroke-width="2.5" />
+                  <text class="mono" x={u + 24} y={v + 29} text-anchor="middle" font-size="15" font-weight="700" fill={hot ? '#FFC93C' : ink}>{label}</text>
+                </g>
+              );
+            }
+            return (
+              <g class={`tile tl-${l.id}`}>
+                <rect x={u} y={v} width="50" height="50" rx="6" fill={l.tile} stroke={ink} stroke-width="2.5" stroke-dasharray={l.id === 'widget' ? '6 4' : '0'} />
+                {label && <text class="mono" x={u + 25} y={v + 29} text-anchor="middle" font-size="12.5" font-weight="700" fill={ink}>{label}</text>}
+              </g>
+            );
+          })}
+        </g>
+        {labels && (
+          <g class="iso-label">
+            <line x1={cx + w + 10} y1={l.cy} x2={cx + w + 36} y2={l.cy} stroke={ink} stroke-width="2.5" stroke-linecap="round" />
+            <text x={cx + w + 46} y={l.cy - 2} font-size="19" font-weight="900" fill={ink}>{l.name}</text>
+            <text x={cx + w + 46} y={l.cy + 20} font-size="16" font-weight="700" fill="#53557E">{l.note}</text>
+          </g>
+        )}
+      </g>
+    ))
+  }
+  {
+    bolt && (
+      <g class="bolt" opacity="0">
+        <rect x="-64" y="-19" width="128" height="38" rx="12" fill="#FFC93C" stroke={ink} stroke-width="3" />
+        <text class="mono" y="6" text-anchor="middle" font-size="16" font-weight="700" fill={ink}>setState()</text>
+      </g>
+    )
+  }
+</svg>
