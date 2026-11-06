@@ -6,6 +6,7 @@ type Loader = () => Promise<{ default: SceneInit }>;
 // Each act is its own chunk. The heavy one (3D) is only fetched when you get close to it.
 const loaders: Loader[] = [
   () => import('./scenes/intro'),
+  () => import('./scenes/words'),
   () => import('./scenes/why'),
   () => import('./scenes/trees'),
   () => import('./scenes/journey'),
@@ -13,6 +14,7 @@ const loaders: Loader[] = [
   () => import('./scenes/compare'),
   () => import('./scenes/reach'),
   () => import('./scenes/answers'),
+  () => import('./scenes/expert'),
 ];
 
 export function initDeck() {
@@ -96,6 +98,7 @@ export function initDeck() {
   prevBtn.addEventListener('click', () => go(cur - 1));
   dots.forEach((d, i) => d.addEventListener('click', () => go(i)));
   q('#start')?.addEventListener('click', () => go(1));
+  q('#skip')?.addEventListener('click', () => go(total - 1));
   document.addEventListener('deck:goto', ((e: CustomEvent) => go(e.detail)) as unknown as EventListener);
 
   document.addEventListener('keydown', (e) => {

@@ -23,6 +23,6 @@ export const episodes: Episode[] = [
       'What triggers a rebuild? Which widgets rebuild?',
       'Whole app, whole screen, or a subtree?',
     ],
-    slides: 8,
+    slides: 10,
   },
 ];

@@ -909,3 +909,200 @@ details.say p {
 .chart .nd.o-recreate.hit {
   fill: #ffb3a8;
 }
+
+/* ---------- Beginner help: restaurant lines, word cards ---------- */
+.explain .think {
+  margin: 8px 0 0;
+  padding-top: 8px;
+  border-top: 2px dashed rgba(26, 27, 58, 0.25);
+  font-weight: 700;
+  color: var(--mut);
+}
+.explain .think i {
+  font-style: normal;
+  font-weight: 900;
+  color: var(--ink);
+}
+.explain p b {
+  display: inline;
+  font-size: inherit;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink);
+  background: linear-gradient(transparent 60%, rgba(255, 201, 60, 0.7) 60%);
+}
+.words {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  padding: 20px;
+  align-content: center;
+  overflow-y: auto;
+}
+.word {
+  padding: 14px 16px 16px;
+  border-radius: 24px;
+  background: var(--soft);
+  border: 3px solid var(--ink);
+  display: grid;
+  gap: 4px;
+  align-content: start;
+}
+.word svg {
+  width: 54px;
+  height: 54px;
+}
+.word h3 {
+  font-size: clamp(20px, 2vw, 26px);
+  line-height: 1.1;
+}
+.word p {
+  margin: 0;
+  font-size: clamp(15px, 1.4vw, 19px);
+  line-height: 1.35;
+  font-weight: 700;
+  color: var(--mut);
+}
+.word code {
+  justify-self: start;
+  margin-top: 4px;
+  padding: 3px 10px;
+  border-radius: 10px;
+  background: #fff;
+  border: 2px solid var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-ligatures: none;
+}
+@media (max-width: 860px), (max-aspect-ratio: 1/1) {
+  .words {
+    gap: 8px;
+    padding: 12px;
+    align-content: start;
+  }
+  .word {
+    padding: 10px 12px 12px;
+    border-radius: 18px;
+  }
+  .word svg {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+/* ---------- Expert answers ---------- */
+.scene.read {
+  place-items: stretch;
+}
+.expert {
+  height: 100%;
+  overflow-y: auto;
+  padding: 24px 28px 30px;
+  text-align: left;
+  scrollbar-width: thin;
+}
+.expert h3 {
+  font-size: clamp(21px, 2.2vw, 28px);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+}
+.expert h4 {
+  margin: 18px 0 6px;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--blue-d);
+}
+.expert .sum {
+  margin: 10px 0 14px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: #fff8dc;
+  border: 3px solid var(--ink);
+  font-size: 16px;
+  line-height: 1.4;
+  font-weight: 800;
+}
+.expert ol,
+.expert ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+.expert ol {
+  counter-reset: s;
+}
+.expert li {
+  position: relative;
+  padding-left: 40px;
+  font-size: 15.5px;
+  line-height: 1.5;
+  font-weight: 600;
+}
+.expert ol li::before {
+  counter-increment: s;
+  content: counter(s);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--blue);
+  color: #fff;
+  font-weight: 900;
+  font-size: 14px;
+}
+.expert ul li::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+  background: var(--yellow);
+  border: 2px solid var(--ink);
+}
+.expert li b {
+  font-weight: 900;
+}
+.expert code {
+  padding: 1px 6px;
+  border-radius: 7px;
+  background: #eef0fb;
+  font-size: 13px;
+  font-weight: 500;
+  font-variant-ligatures: none;
+}
+.expert .end {
+  margin: 16px 0 0;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: #d9f7ea;
+  border: 3px solid var(--ink);
+  font-size: 15.5px;
+  line-height: 1.45;
+  font-weight: 700;
+}
+@media (max-width: 860px), (max-aspect-ratio: 1/1) {
+  .act.read {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  .act.read .scene {
+    order: 0;
+  }
+  .act.read .panel {
+    max-height: 36vh;
+  }
+  .expert {
+    padding: 16px 16px 24px;
+  }
+}

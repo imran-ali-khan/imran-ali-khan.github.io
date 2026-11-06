@@ -4,17 +4,8 @@ import { q, qa, reduce, type SceneInit } from '../util';
 const init: SceneInit = (root) => {
   const cards = qa('.acard', root);
   const scene = q('.scene', root);
-  const note = q('#copy-note', root);
-
-  q('#copy', root).addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText(q('#say-text', root).textContent || '');
-      note.textContent = 'Copied.';
-    } catch {
-      note.textContent = 'Could not copy. Open the answer and select the text.';
-    }
-  });
   q('#again', root).addEventListener('click', () => document.dispatchEvent(new CustomEvent('deck:goto', { detail: 0 })));
+  q('#to-expert', root).addEventListener('click', () => document.dispatchEvent(new CustomEvent('deck:goto', { detail: 9 })));
 
   function burst() {
     if (reduce) return;
@@ -35,7 +26,6 @@ const init: SceneInit = (root) => {
 
   return {
     enter() {
-      note.textContent = '';
       gsap.fromTo(cards, { y: 36, opacity: 0, scale: 0.96 }, { y: 0, opacity: 1, scale: 1, duration: 0.7, stagger: 0.18, delay: 0.3, ease: 'back.out(1.6)' });
       gsap.delayedCall(0.5, burst);
     },

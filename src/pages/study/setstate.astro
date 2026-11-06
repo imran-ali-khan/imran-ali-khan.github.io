@@ -12,6 +12,7 @@ import compare from '@/icons/lucide/git-compare.svg?raw';
 import brush from '@/icons/lucide/paintbrush.svg?raw';
 
 const base = import.meta.env.BASE_URL;
+const D = 'https://api.flutter.dev/flutter/widgets/';
 const inner = (svg: string) => svg.replace(/<!--[\s\S]*?-->/g, '').replace(/<svg[^>]*>/, '').replace('</svg>', '');
 
 const stations = [
@@ -26,7 +27,7 @@ const SY = (i: number) => 78 + i * 100;
 
 const interview = `setState runs my callback and marks that Element dirty. Flutter schedules a frame. In that frame, it calls build() only on dirty Elements, parents first. build() returns new widgets. updateChild compares old and new: same object, skip; same type and key, reuse the Element; otherwise a new Element, and the State is lost. So only the subtree under that State rebuilds, not the whole app. RenderObjects update only when a value really changed.`;
 
-const labels = ['Start', 'Why', 'Trees', 'Journey', 'Batching', 'Compare', 'Reach', 'Answers'];
+const labels = ['Start', 'Words', 'Why', 'Trees', 'Journey', 'Batching', 'Compare', 'Reach', 'Recap', 'Expert'];
 ---
 
 <StudyLayout
@@ -47,21 +48,41 @@ const labels = ['Start', 'Why', 'Trees', 'Journey', 'Batching', 'Compare', 'Reac
       <div class="panel">
         <h1>What happens when you call <em>setState()</em>?</h1>
         <p class="lead">A visual guide. Simple words.</p>
-        <div class="explain"><b>In simple words</b><p>setState() tells Flutter: my data changed, please redraw. This lesson shows how, one step at a time.</p></div>
+        <div class="explain"><b>In simple words</b><p>setState() tells Flutter: my data changed, please redraw. We will see how, step by step, with a restaurant story.</p></div>
         <Flow label="The whole story" items={[{ t: 'setState()', c: 'y' }, { t: 'mark dirty', c: 'y' }, { t: 'wait for frame', c: 'n' }, { t: 'build', c: 'b' }, { t: 'compare', c: 'b' }, { t: 'draw', c: 'g' }]} />
-        <div class="ctl"><button class="btn primary" id="start" type="button">Start &rarr;</button></div>
+        <div class="ctl"><button class="btn primary" id="start" type="button">Start &rarr;</button><button class="btn" id="skip" type="button">I know Flutter: expert answers</button></div>
         <p class="cap" style="min-height:0;font-size:15px">Use the arrow keys, swipe, or the buttons below.</p>
         <Src links={[{ label: 'State.setState', href: 'https://api.flutter.dev/flutter/widgets/State/setState.html' }]} />
       </div>
       <div class="scene"><IsoStack id="iso-intro" /></div>
     </section>
 
+
+    <!-- Words (beginner basics) -->
+    <section class="act" id="act-words" data-label="Words" aria-label="Words">
+      <div class="panel">
+        <p class="kick"><i>1</i>New to Flutter?</p>
+        <h2>Four words <em>first</em>.</h2>
+        <div class="explain"><b>In simple words</b><p>Imagine a restaurant. You order. The waiter looks after your table. The chef cooks. Flutter works the same way.</p></div>
+        <Flow label="The restaurant story" items={[{ t: 'You: setState()', c: 'y' }, { t: 'Waiter: Element', c: 'y' }, { t: 'Order slip: Widget', c: 'b' }, { t: 'Chef: RenderObject', c: 'g' }]} />
+        <Src links={[{ label: 'Architecture overview', href: 'https://docs.flutter.dev/resources/architectural-overview' }]} />
+      </div>
+      <div class="scene">
+        <div class="words" id="words">
+          <div class="word"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="10" width="36" height="28" rx="6" fill="#B4C2FF" stroke="#1A1B3A" stroke-width="3" stroke-dasharray="6 4" /><rect x="12" y="18" width="24" height="5" rx="2.5" fill="#1A1B3A" /><rect x="12" y="27" width="14" height="5" rx="2.5" fill="#1A1B3A" /></svg><h3>Widget</h3><p>A small piece of the screen. A button, a text, a picture.</p><code>Text('Hello')</code></div>
+          <div class="word"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="18" fill="#FFC93C" stroke="#1A1B3A" stroke-width="3" /><text x="24" y="31" text-anchor="middle" font-size="22" font-weight="900" fill="#1A1B3A">3</text></svg><h3>State</h3><p>Data that can change. A counter, a name, a switch.</p><code id="w-state">count = 3</code></div>
+          <div class="word"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#1A1B3A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" /><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /><path d="M8 16H3v5" /></svg><h3>Rebuild</h3><p>Flutter draws a piece again, with the new data.</p><code>3 --&gt; 4</code></div>
+          <div class="word"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#1A1B3A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" set:html={inner(timer)} /><h3>Frame</h3><p>One redraw of the screen. About 60 every second.</p><code>1 sec = 60 frames</code></div>
+        </div>
+      </div>
+    </section>
+
     <!-- 1 · Why -->
     <section class="act" id="act-1" data-label="Why" aria-label="Why">
       <div class="panel">
-        <p class="kick"><i>1</i>Why</p>
+        <p class="kick"><i>2</i>Why</p>
         <h2>Variables don't <em>redraw</em> the screen.</h2>
-        <div class="explain"><b>In simple words</b><p>A variable only lives in memory. Flutter does not watch it. So after it changes, you call setState() to say: please redraw.</p></div>
+        <div class="explain"><b>In simple words</b><p>A variable is just a note in memory. Flutter does not read your notes. After you change one, call setState() to say: please redraw.</p><p class="think"><i>Like a restaurant:</i> you change your mind about your order, but the waiter does not know until you tell them.</p></div>
         <p class="cap" id="why-cap" aria-live="polite">Press count++.</p>
         <div class="ctl">
           <button class="btn" id="why-inc" type="button">count++</button>
@@ -102,14 +123,14 @@ const labels = ['Start', 'Why', 'Trees', 'Journey', 'Batching', 'Compare', 'Reac
     <!-- 2 · Trees -->
     <section class="act" id="act-2" data-label="Trees" aria-label="Trees">
       <div class="panel">
-        <p class="kick"><i>2</i>The big picture</p>
+        <p class="kick"><i>3</i>The big picture</p>
         <h2>Flutter keeps <em>three</em> trees.</h2>
         <ul class="legend">
           <li style="--c:var(--blue)"><i></i><span><b>Widget</b> the blueprint. Replaced often.</span></li>
           <li style="--c:var(--yellow)"><i></i><span><b>Element</b> the manager. Keeps State.</span></li>
           <li style="--c:var(--mint)"><i></i><span><b>RenderObject</b> draws pixels.</span></li>
         </ul>
-        <div class="explain"><b>In simple words</b><p>Widgets only describe the screen, and they are cheap. Elements stay in place and keep your State. RenderObjects measure and draw.</p></div>
+        <div class="explain"><b>In simple words</b><p>Flutter keeps three lists. Widgets say what the screen should look like. Elements are the managers. RenderObjects do the drawing.</p><p class="think"><i>Like a restaurant:</i> order slip (Widget), waiter (Element), chef (RenderObject). New slip every time, same waiter.</p></div>
         <p class="cap" id="trees-cap" aria-live="polite">Press the button.</p>
         <div class="ctl"><button class="btn yellow" id="trees-go" type="button">Press setState()</button></div>
         <Flow label="Who does what" items={[{ t: 'Widget: describes', c: 'b' }, { t: 'Element: manages + State', c: 'y' }, { t: 'RenderObject: layout + paint', c: 'g' }]} />
@@ -121,9 +142,9 @@ const labels = ['Start', 'Why', 'Trees', 'Journey', 'Batching', 'Compare', 'Reac
     <!-- 3 · Journey -->
     <section class="act" id="act-3" data-label="Journey" aria-label="Journey">
       <div class="panel">
-        <p class="kick"><i>3</i>Behind the scenes</p>
+        <p class="kick"><i>4</i>Behind the scenes</p>
         <h2>The journey of one <em>setState()</em>.</h2>
-        <div class="explain"><b>In simple words</b><p>One setState() goes through six stations. Your code does only the first. Flutter does the rest in the next frame.</p></div>
+        <div class="explain"><b>In simple words</b><p>One setState() goes through six stations. Your code does only the first. <b>Dirty</b> simply means: marked as needing an update.</p><p class="think"><i>Like a restaurant:</i> you call the waiter. He writes your table on his update list. In the next kitchen round he fixes your order.</p></div>
         <div class="result" id="j-box"><b id="j-num">1 / 6</b><p id="j-title"></p></div>
         <p class="cap" id="j-text" aria-live="polite"></p>
         <div class="flowbox" id="j-flow"></div>
@@ -164,9 +185,9 @@ const labels = ['Start', 'Why', 'Trees', 'Journey', 'Batching', 'Compare', 'Reac
     <!-- 4 · Batching -->
     <section class="act" id="act-4" data-label="Batching" aria-label="Batching">
       <div class="panel">
-        <p class="kick"><i>4</i>The wait</p>
+        <p class="kick"><i>5</i>The wait</p>
         <h2>Many calls. <em>One</em> rebuild.</h2>
-        <div class="explain"><b>In simple words</b><p>An Element that is already dirty is not marked again. Flutter builds each dirty Element once per frame. So extra calls in the same frame cost almost nothing.</p></div>
+        <div class="explain"><b>In simple words</b><p>Flutter updates the screen in rounds called <b>frames</b>. Call setState() many times in one round, and it still updates only once.</p><p class="think"><i>Like a restaurant:</i> you change your order 5 times before the kitchen round. The waiter still sends one slip.</p></div>
         <p class="cap" id="b-cap" aria-live="polite">The first call raises a flag. The rest see: already dirty.</p>
         <div class="stats">
           <div class="stat"><span>setState calls</span><b id="b-calls">0</b></div>
@@ -207,9 +228,9 @@ const labels = ['Start', 'Why', 'Trees', 'Journey', 'Batching', 'Compare', 'Reac
     <!-- 5 · Compare -->
     <section class="act" id="act-5" data-label="Compare" aria-label="Compare">
       <div class="panel">
-        <p class="kick"><i>5</i>The key step</p>
+        <p class="kick"><i>6</i>The key step</p>
         <h2><em>Reuse</em> or <em>recreate</em>?</h2>
-        <div class="explain"><b>In simple words</b><p>build() gives new widgets. For each spot, Flutter compares old and new. Same widget: skip. Same type and key: reuse the Element. Anything else: a new Element.</p></div>
+        <div class="explain"><b>In simple words</b><p>After build(), Flutter holds a new widget. It checks it against the old one. Same widget: do nothing. Same type and key: keep the Element and update it. Different: a new Element, and the old State is lost.</p><p class="think"><i>Like a restaurant:</i> same dish and same table number: the waiter stays and reads the new slip. Different dish: a new waiter starts, and the old table notes are gone.</p></div>
         <p class="cap" id="c-cap">Pick a new widget:</p>
         <div class="seg">
           <button class="btn" id="c-skip" type="button">const (same object)</button>
@@ -293,13 +314,13 @@ const labels = ['Start', 'Why', 'Trees', 'Journey', 'Batching', 'Compare', 'Reac
     <!-- 6 · Reach (3D) -->
     <section class="act" id="act-6" data-label="Reach" aria-label="Reach">
       <div class="panel">
-        <p class="kick"><i>6</i>Where it reaches</p>
+        <p class="kick"><i>7</i>Where it reaches</p>
         <h2>How far does it <em>reach</em>?</h2>
         <div class="seg">
           <button class="btn" id="r-a" type="button" aria-pressed="true">State in HomePage</button>
           <button class="btn" id="r-b" type="button" aria-pressed="false">State in CounterBox</button>
         </div>
-        <div class="explain"><b>In simple words</b><p>setState() rebuilds the State's own Element and everything below it. Parents and siblings are not touched. So keep setState low, in a small widget.</p></div>
+        <div class="explain"><b>In simple words</b><p>Only the Element that called setState() and the Elements below it rebuild. Parents and siblings stay as they are. So call setState() in a small widget.</p><p class="think"><i>Like a restaurant:</i> only your table is updated, not the whole restaurant.</p></div>
         <label class="check"><input type="checkbox" id="r-const" /> Header and Footer are <code>const</code></label>
         <div class="ctl"><button class="btn yellow" id="r-go" type="button">Call setState()</button></div>
         <div class="stats">
@@ -317,22 +338,17 @@ const labels = ['Start', 'Why', 'Trees', 'Journey', 'Batching', 'Compare', 'Reac
     </section>
 
     <!-- 7 · Answers -->
-    <section class="act" id="act-7" data-label="Answers" aria-label="Answers">
+    <section class="act" id="act-7" data-label="Recap" aria-label="Recap">
       <div class="panel">
-        <p class="kick"><i>7</i>Recap</p>
-        <h2>The <em>answers</em>.</h2>
-        <div class="explain"><b>In simple words</b><p>build() makes new widgets again and again. An Element is recreated only if the type or key changes. Keys keep State with the right widget when items move.</p></div>
+        <p class="kick"><i>8</i>Recap</p>
+        <h2>The <em>short</em> version.</h2>
+        <div class="explain"><b>In simple words</b><p>Remember: mark, wait, build, compare, draw. Only the subtree rebuilds. A new Element is made only when the type or key changes.</p><p class="think"><i>Like a restaurant:</i> keys are like table numbers. They keep the notes with the right table when tables move.</p></div>
         <Flow label="1. What rebuilds?" items={[{ t: 'setState()', c: 'y' }, { t: 'Element dirty', c: 'y' }, { t: 'next frame', c: 'n' }, { t: 'build()', c: 'b' }, { t: 'updateChild()', c: 'b' }, { t: 'draw changes', c: 'g' }]} />
         <Flow label="2. Reuse or recreate?" items={[{ t: 'build()', c: 'b' }, { t: 'new widgets', c: 'b' }, { t: 'same type + key?', c: 'y' }, { t: 'yes: reuse', c: 'g' }, { t: 'no: recreate', c: 'r' }]} />
-        <details class="say">
-          <summary>Interview answer (1 minute)</summary>
-          <p id="say-text">{interview}</p>
-        </details>
         <div class="ctl">
-          <button class="btn primary" id="copy" type="button">Copy the answer</button>
+          <button class="btn primary" id="to-expert" type="button">Expert answers &rarr;</button>
           <button class="btn" id="again" type="button">Start again</button>
         </div>
-        <p class="cap" id="copy-note" style="min-height:0;font-size:15px" aria-live="polite"></p>
         <Src links={[{ label: 'State lifecycle', href: 'https://api.flutter.dev/flutter/widgets/State-class.html' }, { label: 'Keys', href: 'https://api.flutter.dev/flutter/foundation/Key-class.html' }, { label: 'Element', href: 'https://api.flutter.dev/flutter/widgets/Element-class.html' }]} />
       </div>
       <div class="scene">
@@ -343,6 +359,58 @@ const labels = ['Start', 'Why', 'Trees', 'Journey', 'Batching', 'Compare', 'Reac
         </div>
       </div>
     </section>
+
+    <!-- Expert answers -->
+    <section class="act read" id="act-expert" data-label="Expert" aria-label="Expert answers">
+      <div class="panel">
+        <p class="kick"><i>&#9733;</i>For experts</p>
+        <h2>The two questions, <em>answered</em>.</h2>
+        <div class="seg">
+          <button class="btn" id="x-b1" type="button" aria-pressed="true">Question 1</button>
+          <button class="btn" id="x-b2" type="button" aria-pressed="false">Question 2</button>
+        </div>
+        <p class="cap" id="x-q" style="min-height:0"></p>
+        <div class="ctl"><button class="btn primary" id="x-copy" type="button">Copy this answer</button><span class="cap" id="x-note" style="min-height:0" aria-live="polite"></span></div>
+        <Src links={[{ label: 'State.setState', href: D + 'State/setState.html' }, { label: 'drawFrame', href: D + 'WidgetsBinding/drawFrame.html' }, { label: 'updateChild', href: D + 'Element/updateChild.html' }, { label: 'Element.rebuild', href: D + 'Element/rebuild.html' }, { label: 'GlobalKey', href: D + 'GlobalKey-class.html' }]} />
+      </div>
+      <div class="scene read">
+        <div class="expert">
+          <article id="x-a1">
+            <h3>setState() does not rebuild anything itself.</h3>
+            <p class="sum">It runs your callback, marks the State's Element dirty, and the framework rebuilds that Element in the next frame. The rebuild flows down through reconciliation, never up.</p>
+            <ol>
+              <li><b>Trigger.</b> <code>State.setState(fn)</code> runs <code>fn</code> synchronously (it must not return a Future), then calls <code>Element.markNeedsBuild()</code>.</li>
+              <li><b>Mark.</b> The Element is flagged dirty and added to the <code>BuildOwner</code> dirty list (<code>scheduleBuildFor</code>). An already dirty Element is not marked again, so extra calls in the same frame cost no extra build. The first dirty Element makes the framework request a frame (<code>onBuildScheduled</code>; in the source this leads to <code>ensureVisualUpdate</code> and <code>scheduleFrame</code>).</li>
+              <li><b>Frame.</b> The engine calls <code>drawFrame</code>. Its order: build, layout, compositing bits, paint, compositing, semantics, then finalization (<code>State.dispose</code> for objects removed this frame).</li>
+              <li><b>Build.</b> <code>buildScope</code> rebuilds the dirty Elements in depth order, parents before children. For a <code>StatefulElement</code>, <code>rebuild()</code> leads to <code>performRebuild()</code>, which calls <code>State.build()</code> and gets a new widget subtree.</li>
+              <li><b>Reconcile.</b> <code>updateChild</code> compares each old child with its new widget. Same widget (<code>==</code>, for example <code>const</code>): skipped. Same <code>runtimeType</code> and <code>key</code> (<code>Widget.canUpdate</code>): the Element is reused and <code>update()</code> runs, which triggers <code>didUpdateWidget</code> on a State, then it rebuilds. Otherwise the old Element is deactivated and a new one is inflated.</li>
+              <li><b>Render.</b> A <code>RenderObjectElement</code> copies the new configuration with <code>updateRenderObject</code>. <code>markNeedsLayout</code> and <code>markNeedsPaint</code> only mark work; it runs in that frame's layout and paint phases.</li>
+            </ol>
+            <p class="end"><b>What rebuilds:</b> the dirty Element, plus the descendants that reconciliation reaches and does not skip. Ancestors and siblings are untouched. (A separate trigger: dependents of an <code>InheritedWidget</code> rebuild when it changes.)</p>
+          </article>
+          <article id="x-a2" hidden>
+            <h3>Not the entire app. Not necessarily the whole screen.</h3>
+            <p class="sum">Only the subtree under the State's Element. That is the whole screen only when the State sits at the top of the screen.</p>
+            <h4>Why it stops there</h4>
+            <ul>
+              <li>Only <b>one Element</b> is marked dirty, and <code>buildScope</code> starts from the dirty list, not from the root.</li>
+              <li>Configuration flows <b>down</b>. A child cannot rebuild its parent.</li>
+              <li>Reconciliation can stop inside the subtree: an identical widget (<code>const</code> or cached) is skipped with its whole branch.</li>
+              <li>So keep <code>setState</code> low, use <code>const</code>, and prefer widget classes over helper methods (Flutter performance docs).</li>
+            </ul>
+            <h4>build() vs the Element being recreated</h4>
+            <ul>
+              <li><b><code>build()</code></b> is a State method that returns a new, immutable widget description. It can run many times: every <code>setState</code>, every parent rebuild that hands over a new widget, every dependency change. It is cheap.</li>
+              <li><b>The Element</b> is the long-lived object in the tree. It holds the State and the link to the RenderObject. It is created once (<code>createElement</code>, <code>mount</code>) and reused while the widget at that spot keeps the same <code>runtimeType</code> and <code>key</code>.</li>
+              <li>It is <b>recreated</b> only if the type or key at that spot changes, the widget is removed, or an ancestor Element is recreated. A <code>GlobalKey</code> can move a subtree if it arrives in the same frame.</li>
+              <li><b>Lifecycle effect:</b> <code>createState</code> and <code>initState</code> run once per Element. <code>build</code> runs many times. <code>didUpdateWidget</code> runs when a parent supplies a new widget with the same type and key. <code>dispose</code> runs once, during frame finalization after removal.</li>
+              <li><b>Pitfall:</b> unkeyed siblings are matched by type and position, so reordering can attach the wrong State. Use keys.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <nav class="nav" aria-label="Lesson navigation">
