@@ -1,0 +1,39 @@
+---
+import StudyLayout from '@/layouts/StudyLayout.astro';
+import { episodes, seriesName, seriesIntro } from '@/data/study';
+import '@/styles/study.css';
+
+const base = import.meta.env.BASE_URL;
+---
+
+<StudyLayout title={`${seriesName} | Visual Flutter lessons`} description={seriesIntro}>
+  <div class="study-page deck">
+    <div class="mx-auto w-full max-w-3xl px-6 py-16 sm:py-24">
+      <p class="section-label">Study series</p>
+      <h1 class="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">
+        <span class="text-gradient">{seriesName}</span>
+      </h1>
+      <p class="mt-5 max-w-xl text-lg leading-relaxed text-ink-300">{seriesIntro}</p>
+
+      <ul class="mt-12 grid list-none gap-5 p-0" style="perspective:1200px">
+        {
+          episodes.map((ep) => (
+            <li>
+              <a class="study-card" href={`${base}study/${ep.slug}/`}>
+                <p class="font-mono text-2xs uppercase tracking-[0.2em] text-signal">Episode {ep.number} &middot; {ep.slides} slides</p>
+                <h2 class="mt-3 text-2xl font-semibold text-ink-50">{ep.title}</h2>
+                <p class="mt-3 text-ink-300">{ep.summary}</p>
+                <ul class="mt-5 grid list-none gap-2 p-0 text-sm text-ink-400">
+                  {ep.questions.map((q) => <li>&bull; {q}</li>)}
+                </ul>
+                <span class="btn-primary mt-6">Open the lesson &rarr;</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <p class="mt-10 text-sm text-ink-500">More episodes will be added here.</p>
+    </div>
+  </div>
+</StudyLayout>

@@ -1,0 +1,15 @@
+---
+import { Code } from 'astro:components';
+
+interface Props {
+  code: string;
+  label?: string;
+}
+
+const { code, label } = Astro.props;
+---
+
+<figure class="codebox">
+  {label && <figcaption>{label}</figcaption>}
+  <Code code={code} lang="dart" theme="github-dark" />
+</figure>

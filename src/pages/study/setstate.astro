@@ -1,0 +1,1502 @@
+---
+import StudyLayout from '@/layouts/StudyLayout.astro';
+import Slide from '@/components/study/Slide.astro';
+import Flow from '@/components/study/Flow.astro';
+import CodeBox from '@/components/study/CodeBox.astro';
+import Iso from '@/components/study/Iso.astro';
+import { seriesName } from '@/data/study';
+import '@/styles/study.css';
+
+const base = import.meta.env.BASE_URL;
+
+const codeBug = `int count = 0;
+
+onPressed: () {
+  count++;   // the variable changed in memory
+}            // but the screen? Still shows the old number`;
+
+const codeSetState = `void setState(VoidCallback fn) {
+  fn();                        // 1. run your change right now
+  _element!.markNeedsBuild();  // 2. raise a flag: "I need a new build()"
+}`;
+
+const codeBatch = `setState(() => a++);
+setState(() => b++);
+setState(() => c++);
+// 3 calls, but only ONE build() in the next frame`;
+
+const codeMark = `// inside Element (simplified)
+void markNeedsBuild() {
+  if (!_active) return;            // not in the tree? ignore
+  if (_dirty) return;              // already marked? ignore
+  _dirty = true;                   // raise the flag
+  owner!.scheduleBuildFor(this);   // join the to-do list
+}`;
+
+const codeOwner = `// inside BuildOwner, the manager of all rebuilds (simplified)
+void scheduleBuildFor(Element e) {
+  if (!_scheduledFlushDirtyElements) {
+    onBuildScheduled();        // first dirty element: ask for a new frame
+  }
+  _dirtyElements.add(e);       // add to the dirty list
+}`;
+
+const codeDraw = `// WidgetsBinding.drawFrame (simplified)
+void drawFrame() {
+  buildOwner.buildScope(rootElement);  // BUILD: run the dirty rebuilds
+  super.drawFrame();                   // LAYOUT, PAINT, COMPOSITE
+  buildOwner.finalizeTree();           // clean up Elements that were removed
+}`;
+
+const codeScope = `// BuildOwner.buildScope (simplified)
+void buildScope(Element root) {
+  _dirtyElements.sort(Element._sort);  // shallow elements (parents) first
+  for (final e in _dirtyElements) {
+    e.rebuild();                       // this ends in your build()
+  }
+  _dirtyElements.clear();
+}`;
+
+const codeUpdate = `// Element.updateChild (simplified)
+Element? updateChild(Element? child, Widget? newWidget) {
+  if (child != null) {
+    if (identical(child.widget, newWidget)) return child;  // 1. same object: skip
+    if (Widget.canUpdate(child.widget, newWidget)) {       // 2. same type + key
+      child.update(newWidget);                             //    reuse the Element
+      return child;
+    }
+    deactivateChild(child);                                // 3. drop the old Element
+  }
+  return inflateWidget(newWidget);                         //    create a new Element
+}`;
+
+const codeConst = `class HomePage extends StatefulWidget { /* ... */ }
+
+// inside HomePage's State
+Widget build(BuildContext context) {
+  return Column(children: [
+    const Header(),        // same object every time: skipped
+    CounterBox(),          // new object each time: Element reused, rebuilt
+    const Footer(),        // skipped
+  ]);
+}`;
+
+const codeLife = `createState()   // once, when the Element is born
+initState()     // once
+build()         // MANY times (every setState, every parent rebuild)
+didUpdateWidget() // when the parent hands this Element a NEW widget
+dispose()       // once, when the Element dies`;
+
+const interview = `When I call setState, Flutter runs my callback and marks that widget's Element as dirty. The Element adds itself to the BuildOwner's dirty list and schedules a frame. Nothing is built yet.
+
+In the next frame, Flutter calls build() only for the dirty Elements, parents first. Each build returns new Widget objects. They are cheap, short-lived descriptions.
+
+Then updateChild compares old and new. If it is the same object, like a const widget, it is skipped. If the type and key match, the Element is reused and updated with the new widget. If not, the old Element is thrown away and a new one is created, so the State is lost.
+
+So only the subtree under that State is rebuilt, not the whole app. RenderObjects are updated only when a value really changed, so layout and paint stay small.`;
+
+const chapters = ['Start', 'Why', 'What', 'How', 'Where', 'Element', 'Recap'];
+---
+
+<StudyLayout
+  title="setState() explained visually | Flutter Under the Hood"
+  description="A step by step visual guide to what happens inside Flutter when you call setState()."
+>
+  <div class="deck" id="deck" data-total="19">
+    <header class="deck-top">
+      <a class="back" href={`${base}study/`}>&larr; Study</a>
+      <span class="series">{seriesName} &middot; Episode 1</span>
+      <nav class="chapters" aria-label="Chapters">
+        {chapters.map((c) => <button type="button" data-chapter-btn={c}>{c}</button>)}
+      </nav>
+    </header>
+
+    <div class="stage" id="stage">
+      <!-- 0 ------------------------------------------------------------ -->
+      <section class="slide" data-chapter="Start" aria-roledescription="slide" aria-label="1. Title">
+        <div class="slide-in">
+          <div class="cols c2" style="align-items:center">
+            <div class="sh">
+              <p class="kick"><span class="chip">Episode 1</span><span class="kick-text">{seriesName}</span></p>
+              <h1>
+                What really happens when you call <span class="text-gradient">setState()</span>?
+              </h1>
+              <p class="lead">
+                A visual, step by step guide. We start with the very first idea and end with what Flutter does inside,
+                in the simplest words.
+              </p>
+              <div class="mt-6 grid gap-3">
+                <div class="card tint" style="--c:#38bdf8">
+                  <h3>Question 1</h3>
+                  <p>What exactly triggers a rebuild, and which parts of the widget tree get rebuilt?</p>
+                </div>
+                <div class="card tint" style="--c:#a78bfa">
+                  <h3>Question 2</h3>
+                  <p>
+                    Does <code class="i">setState()</code> rebuild the whole app, the whole screen, or only one subtree? And
+                    what is the difference between <code class="i">build()</code> being called and an Element being
+                    recreated?
+                  </p>
+                </div>
+              </div>
+              <p class="mt-5 text-sm muted">
+                Press <span class="ic">&rarr;</span> or tap <b>Next</b>. Some slides have extra steps and buttons to play with.
+              </p>
+            </div>
+            <Iso />
+          </div>
+        </div>
+      </section>
+
+      <!-- 1 WHY ------------------------------------------------------- -->
+      <Slide
+        n={2}
+        chapter="Why"
+        kicker="The problem"
+        title="Why does setState() exist?"
+        lead="In Flutter, a widget never changes after it is created. It is like a printed photo. To show something new, Flutter needs a new photo."
+      >
+        <div class="cols c2">
+          <div data-step="1">
+            <CodeBox code={codeBug} label="The mistake every beginner makes" />
+            <div class="takeaway bad">
+              Changing a variable only changes memory. Flutter does not watch your variables, so nobody tells it to redraw.
+            </div>
+          </div>
+          <div data-step="2">
+            <div class="phones" id="demo-why">
+              <div class="phone-col">
+                <h4 class="text-ink-100">Without setState</h4>
+                <div class="phone"><span class="big" id="why-a-screen">0</span></div>
+                <span class="pill">count = <b id="why-a-var">0</b></span>
+                <button class="btn-g" id="why-a-btn" type="button">count++</button>
+              </div>
+              <div class="phone-col">
+                <h4 class="text-ink-100">With setState</h4>
+                <div class="phone"><span class="big" id="why-b-screen">0</span></div>
+                <span class="pill">count = <b id="why-b-var">0</b></span>
+                <button class="btn-s" id="why-b-btn" type="button">setState(count++)</button>
+              </div>
+            </div>
+            <p class="mt-3 text-center text-xs muted">Try both buttons. The left screen never updates.</p>
+          </div>
+        </div>
+        <div class="mt-5 grid gap-3" data-step="3">
+          <Flow
+            label="Without setState"
+            steps={[
+              { t: 'count++', c: 'slate' },
+              { t: 'variable changes', c: 'slate' },
+              { t: 'nobody tells Flutter', c: 'rose' },
+              { t: 'screen stays old', c: 'rose' },
+            ]}
+          />
+          <Flow
+            label="With setState"
+            steps={[
+              { t: 'setState(() => count++)', c: 'amber' },
+              { t: 'variable changes', c: 'slate' },
+              { t: 'Flutter is told', c: 'blue' },
+              { t: 'new screen drawn', c: 'green' },
+            ]}
+          />
+        </div>
+        <div class="takeaway note" data-step="3">
+          Think of it as <b>UI = f(state)</b>. The screen is just the result of your data. setState says: "my data changed,
+          please draw the result again."
+        </div>
+      </Slide>
+
+      <!-- 2 WHY ------------------------------------------------------- -->
+      <Slide
+        n={3}
+        chapter="Why"
+        kicker="The big picture"
+        title="Flutter keeps three trees"
+        lead="To redraw fast, Flutter splits the job into three parts. If you understand these three, everything else in this lesson becomes easy."
+      >
+        <div class="cols c-wide-right" style="align-items:center">
+          <Iso compact />
+          <div class="grid gap-3">
+            <div class="card tint" style="--c:#38bdf8" data-step="1">
+              <h3><span class="dot-c"></span>Widget tree: the blueprint</h3>
+              <p>
+                A tiny, read-only description. "A Text that says 5." Very cheap. Flutter creates and throws away thousands of
+                them all the time.
+              </p>
+            </div>
+            <div class="card tint" style="--c:#a78bfa" data-step="2">
+              <h3><span class="dot-c"></span>Element tree: the site manager</h3>
+              <p>
+                Lives for a long time. Knows where each widget sits, <b>holds your State object</b>, and connects the widget to
+                the RenderObject.
+              </p>
+            </div>
+            <div class="card tint" style="--c:#34d399" data-step="3">
+              <h3><span class="dot-c"></span>RenderObject tree: the worker</h3>
+              <p>
+                Does the real job: measures sizes (layout) and draws pixels (paint). This is the expensive part, so Flutter
+                reuses it as much as it can.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="mt-5" data-step="4">
+          <Flow
+            steps={[
+              { t: 'Widget', s: 'what to show', c: 'blue' },
+              { t: 'Element', s: 'who and where (keeps State)', c: 'violet' },
+              { t: 'RenderObject', s: 'size and pixels', c: 'green' },
+            ]}
+          />
+        </div>
+      </Slide>
+
+      <!-- 3 WHAT ------------------------------------------------------ -->
+      <Slide
+        n={4}
+        chapter="What"
+        kicker="Inside setState"
+        title="What is setState(), really?"
+        lead="It does only two small things. And notice: it does not rebuild anything by itself."
+      >
+        <div class="cols c2">
+          <div data-step="1">
+            <CodeBox code={codeSetState} label="setState, simplified" />
+            <p class="mt-3 text-xs muted">
+              Simplified. The real version also has safety checks, for example it complains if your callback returns a Future.
+            </p>
+          </div>
+          <div class="grid gap-3">
+            <div class="card tint" style="--c:#fbbf24" data-step="2">
+              <h3>1. Runs your function, right now</h3>
+              <p>
+                <code class="i">fn()</code> runs at once, in the same moment. Your variable changes immediately. That is why the
+                callback must be normal code, not <code class="i">async</code>.
+              </p>
+            </div>
+            <div class="card tint" style="--c:#a78bfa" data-step="3">
+              <h3>2. Marks the Element as dirty</h3>
+              <p>
+                "Dirty" is just a flag that means: <i>this Element needs a new <code class="i">build()</code></i>. The real
+                work happens later, in the next frame.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="mt-5" data-step="4">
+          <Flow
+            steps={[
+              { t: 'setState(fn)', c: 'amber' },
+              { t: 'fn() runs now', s: 'variable changes', c: 'slate' },
+              { t: 'markNeedsBuild()', c: 'violet' },
+              { t: 'Element is dirty', s: 'flag raised', c: 'violet' },
+              { t: 'rebuild comes later', s: 'next frame', c: 'blue' },
+            ]}
+          />
+        </div>
+      </Slide>
+
+      <!-- 4 WHAT ------------------------------------------------------ -->
+      <Slide
+        n={5}
+        chapter="What"
+        kicker="Try it"
+        title="Dirty flag and batching"
+        lead="Marking an Element dirty is cheap, and you can do it many times. Flutter still rebuilds only once per frame."
+      >
+        <div class="cols c2" id="demo-batch">
+          <div>
+            <CodeBox code={codeBatch} label="Three calls in a row" />
+            <div class="controls mt-4">
+              <button class="btn-s" id="batch-call" type="button">Call setState()</button>
+              <button class="btn-g" id="batch-five" type="button">Call it 5 times</button>
+            </div>
+            <div class="flow-label mt-5">Waiting for the next frame</div>
+            <div class="frame-track"><i id="batch-bar"></i></div>
+            <p class="frame-label" id="batch-frame">Idle. No frame scheduled.</p>
+          </div>
+          <div class="grid gap-3">
+            <div class="stats">
+              <div class="stat"><span>setState calls (this frame)</span><b id="batch-calls">0</b></div>
+              <div class="stat"><span>build() runs (total)</span><b id="batch-builds">0</b></div>
+            </div>
+            <div>
+              <p class="flow-label">BuildOwner dirty list</p>
+              <div class="dirtybox" id="batch-dirty"><span class="empty">Empty. Nothing to rebuild.</span></div>
+            </div>
+            <ul class="log" id="batch-log" aria-live="polite"></ul>
+          </div>
+        </div>
+        <div class="takeaway">
+          The first call adds the Element to the dirty list and asks for a frame. Every next call sees "already dirty" and
+          does nothing. That is why 100 setState calls are not 100 rebuilds.
+        </div>
+      </Slide>
+
+      <!-- 5 HOW ------------------------------------------------------- -->
+      <Slide
+        n={6}
+        chapter="How"
+        kicker="The full journey"
+        title="From setState() to pixels, in one view"
+        lead="Five steps. Your code runs only in step 1. Flutter does the rest in the next frame. We will open every step next."
+      >
+        <div class="grid gap-4">
+          <div data-step="1">
+            <Flow
+              label="1  Mark  (right now, in your code)"
+              steps={[
+                { t: 'setState()', c: 'amber' },
+                { t: 'markNeedsBuild()', c: 'violet' },
+                { t: 'scheduleBuildFor()', c: 'violet' },
+                { t: 'scheduleFrame()', s: 'ask the engine for a frame', c: 'violet' },
+              ]}
+            />
+          </div>
+          <div data-step="2">
+            <Flow
+              label="2  Wait  (until the next VSync, about 16 ms)"
+              steps={[
+                { t: 'your code keeps running', c: 'slate' },
+                { t: 'VSync arrives', c: 'violet' },
+                { t: 'drawFrame()', c: 'violet' },
+              ]}
+            />
+          </div>
+          <div data-step="3">
+            <Flow
+              label="3  Build  +  4  Compare"
+              steps={[
+                { t: 'buildScope()', s: 'dirty elements only', c: 'blue' },
+                { t: 'element.rebuild()', c: 'blue' },
+                { t: 'build()', s: 'new Widgets', c: 'blue' },
+                { t: 'updateChild()', s: 'reuse or recreate', c: 'blue' },
+              ]}
+            />
+          </div>
+          <div data-step="4">
+            <Flow
+              label="5  Draw"
+              steps={[
+                { t: 'update RenderObject', c: 'green' },
+                { t: 'flushLayout', c: 'green' },
+                { t: 'flushPaint', c: 'green' },
+                { t: 'compositeFrame', c: 'green' },
+                { t: 'pixels on screen', c: 'green' },
+              ]}
+            />
+          </div>
+        </div>
+      </Slide>
+
+      <!-- 6 HOW 1 ----------------------------------------------------- -->
+      <Slide
+        n={7}
+        chapter="How"
+        kicker="Step 1 of 5"
+        title="Mark: raise the flag, join the list"
+        lead="markNeedsBuild() checks two things and then writes the Element's name on a to-do list."
+      >
+        <div class="cols c2">
+          <div class="grid gap-3">
+            <div data-step="1"><CodeBox code={codeMark} label="Element" /></div>
+            <div data-step="2"><CodeBox code={codeOwner} label="BuildOwner" /></div>
+          </div>
+          <div class="grid gap-3" data-step="3">
+            <Flow
+              col
+              steps={[
+                { t: 'Element._dirty = true', s: 'flag raised', c: 'violet' },
+                { t: 'BuildOwner._dirtyElements.add(element)', s: 'name on the to-do list', c: 'violet' },
+                { t: 'onBuildScheduled()', s: 'only for the first dirty element', c: 'violet' },
+                { t: 'ensureVisualUpdate() / scheduleFrame()', c: 'violet' },
+                { t: 'Engine: "call me at the next VSync"', c: 'amber' },
+              ]}
+            />
+          </div>
+        </div>
+        <div class="takeaway" data-step="4">
+          Nothing is built yet. So far there is only one flag and one list entry. That is why setState() itself is so cheap.
+        </div>
+      </Slide>
+
+      <!-- 7 HOW 2 ----------------------------------------------------- -->
+      <Slide
+        n={8}
+        chapter="How"
+        kicker="Step 2 of 5"
+        title="Wait: the next frame is the starting gun"
+        lead="A screen refreshes at a fixed rhythm: 60 times a second on most phones (every 16.6 ms), 120 on some (every 8.3 ms). Flutter builds once per beat, not once per setState."
+      >
+        <div class="timeline" data-step="1">
+          <span class="mark" style="left:4%">setState() called</span>
+          <span class="mark vs" style="left:78%">VSync: frame starts</span>
+          <div class="rail">
+            <div class="work">your code keeps running (user taps, timers, network...)</div>
+            <div class="frame">build + draw</div>
+          </div>
+          <span class="sweep"></span>
+        </div>
+        <div class="cols c2 mt-5">
+          <div data-step="2">
+            <Flow
+              col
+              label="What the engine does at each beat"
+              steps={[
+                { t: 'VSync', s: 'screen says: frame time!', c: 'violet' },
+                { t: 'onBeginFrame', s: 'animations and tickers move', c: 'slate' },
+                { t: 'onDrawFrame', c: 'violet' },
+                { t: 'WidgetsBinding.drawFrame()', c: 'blue' },
+              ]}
+            />
+          </div>
+          <div data-step="3">
+            <CodeBox code={codeDraw} label="drawFrame" />
+          </div>
+        </div>
+        <div class="takeaway" data-step="4">
+          This waiting is why many setState calls become one rebuild, and why setState never blocks your code.
+        </div>
+      </Slide>
+
+      <!-- 8 HOW 3 ----------------------------------------------------- -->
+      <Slide
+        n={9}
+        chapter="How"
+        kicker="Step 3 of 5"
+        title="Build: only the dirty Elements, parents first"
+        lead="buildScope() does not start from the root of the app. It starts from the dirty list."
+      >
+        <div class="cols c2">
+          <div class="grid gap-3">
+            <div data-step="1"><CodeBox code={codeScope} label="buildScope" /></div>
+            <div data-step="3">
+              <div class="grid gap-3">
+                <div class="sortrow">
+                  <span class="lbl">Dirty list when the frame starts</span>
+                  <span class="chipx">CounterBox<small>depth 5</small></span>
+                  <span class="chipx">HomePage<small>depth 3</small></span>
+                </div>
+                <div class="sortrow">
+                  <span class="lbl">{'-->'} after sorting by depth</span>
+                  <span class="chipx">HomePage<small>depth 3</small></span>
+                  <span class="chipx">CounterBox<small>depth 5</small></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="grid gap-3" data-step="2">
+            <Flow
+              col
+              steps={[
+                { t: 'buildScope()', c: 'blue' },
+                { t: 'sort dirty list by depth', s: 'parents first', c: 'amber' },
+                { t: 'element.rebuild()', c: 'blue' },
+                { t: 'performRebuild()', c: 'blue' },
+                { t: 'state.build(context)', s: 'your code runs', c: 'amber' },
+                { t: 'returns new Widget(s)', c: 'blue' },
+              ]}
+            />
+          </div>
+        </div>
+        <div class="takeaway" data-step="4">
+          Why parents first? If a parent and its child are both dirty, the parent's build already refreshes the child. When the
+          loop reaches the child, it is no longer dirty, so it is not built twice.
+        </div>
+      </Slide>
+
+      <!-- 9 HOW 4 ----------------------------------------------------- -->
+      <Slide
+        n={10}
+        chapter="How"
+        kicker="Step 4 of 5"
+        title="Compare: reuse or recreate the Element?"
+        lead="build() gave back brand new widgets. For every child spot, Flutter asks two questions. This is the heart of the whole lesson."
+      >
+        <div class="cols c2">
+          <div class="grid gap-3">
+            <div class="decide" data-step="1">
+              <div class="q">
+                <span class="yesno y">Q1</span>Is the new widget the <b>exact same object</b> as the old one? <code>identical(old, new)</code>
+              </div>
+            </div>
+            <div class="decide" data-step="2">
+              <div class="q">
+                <span class="yesno y">Q2</span>If not: same <b>type</b> and same <b>key</b>? <code>Widget.canUpdate(old, new)</code>
+              </div>
+            </div>
+          </div>
+          <div data-step="3"><CodeBox code={codeUpdate} label="updateChild" /></div>
+        </div>
+        <div class="outs">
+          <div class="out" style="--c:#64748b" data-step="1">
+            <h4><span class="tag2">Q1 = yes</span>SKIP</h4>
+            <p>
+              Nothing to do. The Element and everything below it are left alone. This is what <code class="i">const</code> gives you.
+            </p>
+          </div>
+          <div class="out" style="--c:#38bdf8" data-step="2">
+            <h4><span class="tag2">Q2 = yes</span>REUSE</h4>
+            <p>
+              Keep the Element, hand it the new widget (<code class="i">element.update</code>), and it rebuilds. The State survives.
+            </p>
+          </div>
+          <div class="out" style="--c:#fb7185" data-step="3">
+            <h4><span class="tag2">Q2 = no</span>RECREATE</h4>
+            <p>
+              Throw the old Element away (State is disposed) and inflate a new Element with a fresh State.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-4" data-step="4">
+          <Flow
+            steps={[
+              { t: 'new Widget', c: 'blue' },
+              { t: 'identical?', s: 'yes: skip', c: 'slate' },
+              { t: 'canUpdate?', s: 'yes: reuse Element', c: 'violet' },
+              { t: 'else: new Element', s: 'State lost', c: 'rose' },
+            ]}
+          />
+        </div>
+      </Slide>
+
+      <!-- 10 HOW 5 ---------------------------------------------------- -->
+      <Slide
+        n={11}
+        chapter="How"
+        kicker="Step 5 of 5"
+        title="Draw: only what really changed"
+        lead="Reused Elements pass the new settings to their RenderObject. If a value truly changed, the RenderObject asks to be measured or painted again. If not, nothing happens."
+      >
+        <div class="cols c2">
+          <div class="grid gap-3">
+            <div class="card tint" style="--c:#34d399" data-step="1">
+              <h3>Text('5') becomes Text('6')</h3>
+              <p>The text really changed. So the RenderObject says "I need layout and paint". It does both.</p>
+              <p class="mt-2 font-mono text-xs" style="color:#6ee7b7">build() ran {'-->'} layout {'-->'} paint {'-->'} new pixels</p>
+            </div>
+            <div class="card tint" style="--c:#64748b" data-step="2">
+              <h3>Text('5') becomes Text('5')</h3>
+              <p>A new widget object, but the same data. The RenderObject sees no change, so it skips layout and paint.</p>
+              <p class="mt-2 font-mono text-xs" style="color:#94a3b8">build() ran {'-->'} nothing else. No new pixels.</p>
+            </div>
+          </div>
+          <div data-step="3">
+            <Flow
+              col
+              steps={[
+                { t: 'element.update(newWidget)', c: 'violet' },
+                { t: 'updateRenderObject()', c: 'green' },
+                { t: 'value changed?', s: 'no: stop here', c: 'slate' },
+                { t: 'markNeedsLayout / markNeedsPaint', c: 'green' },
+                { t: 'flushLayout --> flushPaint', c: 'green' },
+                { t: 'compositeFrame', s: 'sent to the GPU', c: 'green' },
+              ]}
+            />
+          </div>
+        </div>
+        <div class="takeaway note" data-step="4">
+          build() is cheap: it only creates small objects. Layout and paint are the costly parts, and Flutter does them only
+          when something actually changed.
+        </div>
+      </Slide>
+
+      <!-- 11 WHERE ---------------------------------------------------- -->
+      <Slide
+        n={12}
+        chapter="Where"
+        kicker="Try it"
+        title="Where does the rebuild reach?"
+        lead="Choose where the State lives, then press setState(). Watch which Elements light up."
+      >
+        <div class="cols c2" id="demo-tree">
+          <div>
+            <ul class="tree" id="tree">
+              <li data-n="app">
+                <span class="tn">MyApp</span>
+                <ul>
+                  <li data-n="mat">
+                    <span class="tn">MaterialApp</span>
+                    <ul>
+                      <li data-n="home">
+                        <span class="tn">HomePage <em>State A</em></span>
+                        <ul>
+                          <li data-n="scaf">
+                            <span class="tn">Scaffold</span>
+                            <ul>
+                              <li data-n="col">
+                                <span class="tn">Column</span>
+                                <ul>
+                                  <li data-n="head" data-canconst="true"><span class="tn">Header <small></small></span></li>
+                                  <li data-n="cbox">
+                                    <span class="tn">CounterBox <em>State B</em></span>
+                                    <ul>
+                                      <li data-n="txt"><span class="tn">Text</span></li>
+                                    </ul>
+                                  </li>
+                                  <li data-n="foot" data-canconst="true"><span class="tn">Footer <small></small></span></li>
+                                </ul>
+                              </li>
+                            </ul>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <div class="grid gap-3" style="align-content:start">
+            <div class="controls">
+              <div class="seg" role="group" aria-label="Where does setState get called?">
+                <button type="button" id="tree-a" aria-pressed="true">State A (HomePage)</button>
+                <button type="button" id="tree-b" aria-pressed="false">State B (CounterBox)</button>
+              </div>
+            </div>
+            <div class="controls">
+              <label class="check"><input type="checkbox" id="tree-const" /> Header and Footer are <code class="i">const</code></label>
+              <button class="btn-s" id="tree-run" type="button">Call setState()</button>
+            </div>
+            <div class="legend">
+              <span style="--c:#fbbf24"><i></i>setState here</span>
+              <span style="--c:#38bdf8"><i></i>rebuilt</span>
+              <span style="--c:#64748b"><i></i>skipped</span>
+              <span style="--c:#2e333d"><i></i>not touched</span>
+            </div>
+            <div class="stats">
+              <div class="stat"><span>Elements rebuilt</span><b id="tree-n-rebuilt">0</b></div>
+              <div class="stat"><span>Skipped</span><b id="tree-n-skipped">0</b></div>
+              <div class="stat"><span>Not touched</span><b id="tree-n-untouched">0</b></div>
+              <div class="stat"><span>Recreated</span><b>0</b></div>
+            </div>
+            <ul class="log" id="tree-log" aria-live="polite"></ul>
+            <div class="verdict" id="tree-verdict">Press the button to see what happens.</div>
+          </div>
+        </div>
+      </Slide>
+
+      <!-- 12 WHERE ---------------------------------------------------- -->
+      <Slide
+        n={13}
+        chapter="Where"
+        kicker="The answer to Question 2"
+        title="The whole app? The whole screen? Or a subtree?"
+        lead="Only the subtree under the State that called setState(). Here is the short answer, and then the reasons."
+      >
+        <div class="ans" data-step="1">
+          <div class="row">
+            <div class="qq">The whole app?</div>
+            <div class="aa"><span class="verd no">NO</span>MyApp, MaterialApp and everything above the State are never touched.</div>
+          </div>
+          <div class="row">
+            <div class="qq">The whole screen?</div>
+            <div class="aa"><span class="verd maybe">ONLY IF</span>your State sits at the top of the screen. Then its subtree is the screen.</div>
+          </div>
+          <div class="row">
+            <div class="qq">The subtree of that State?</div>
+            <div class="aa"><span class="verd yes">YES</span>The Element that called setState, and the Elements below it (except branches that are skipped).</div>
+          </div>
+        </div>
+
+        <h3 class="mt-6 text-lg" data-step="2">Why does it stop there?</h3>
+        <div class="cols c2 mt-3">
+          <ul class="list" data-step="2">
+            <li><span class="mk n">1</span><span><b>setState marks one Element.</b> Not the tree. Only that Element goes on the dirty list.</span></li>
+            <li><span class="mk n">2</span><span><b>buildScope starts from dirty Elements.</b> It never walks down from the root.</span></li>
+          </ul>
+          <ul class="list" data-step="3">
+            <li><span class="mk n">3</span><span><b>Data flows down only.</b> A child cannot change its parent's widget, so a parent never needs a rebuild because of a child.</span></li>
+            <li><span class="mk n">4</span><span><b>updateChild stops at identical widgets.</b> const and cached widgets cut whole branches, even inside the subtree.</span></li>
+          </ul>
+        </div>
+        <div class="mt-4" data-step="4">
+          <Flow
+            steps={[
+              { t: 'State.setState()', c: 'amber' },
+              { t: 'that Element is dirty', c: 'violet' },
+              { t: 'rebuild itself', c: 'blue' },
+              { t: 'walk DOWN only', c: 'blue' },
+              { t: 'stop at const / identical', c: 'slate' },
+            ]}
+          />
+        </div>
+        <div class="takeaway note" data-step="5">
+          One more way to be rebuilt: a widget that reads an <b>InheritedWidget</b> (like <code class="i">Theme.of(context)</code> or
+          <code class="i">MediaQuery.of(context)</code>) is marked dirty when that InheritedWidget changes, even if it is far away. That is a different trigger, not setState.
+        </div>
+      </Slide>
+
+      <!-- 13 ELEMENT -------------------------------------------------- -->
+      <Slide
+        n={14}
+        chapter="Element"
+        kicker="The second half of Question 2"
+        title="build() is called often. Elements are born rarely."
+        lead="These are two different things, and mixing them up is the most common confusion."
+      >
+        <div class="cols c2">
+          <div class="card tint" style="--c:#38bdf8" data-step="1">
+            <h3><span class="dot-c"></span>Widget: replaced every build</h3>
+            <p>A new object each time. Tiny and read-only. Think of a <b>sticky note</b> with instructions that you throw away and write again.</p>
+          </div>
+          <div class="card tint" style="--c:#a78bfa" data-step="2">
+            <h3><span class="dot-c"></span>Element: stays in its seat</h3>
+            <p>Lives across many rebuilds. Holds your <b>State</b>, its place in the tree, and the RenderObject link. Think of the <b>employee at the desk</b>.</p>
+          </div>
+        </div>
+
+        <div class="card mt-4" data-step="3">
+          <p style="margin-top:0">
+            Every frame, the manager gives the employee a new sticky note. If the note still says the <b>same job (type)</b> and the
+            <b>same name tag (key)</b>, the employee keeps the desk and just reads the new note. If the job or the name tag is different,
+            the employee goes home and a new person is hired. All their notes (State) are lost.
+          </p>
+        </div>
+
+        <div class="cols c2 mt-4">
+          <div data-step="4">
+            <CodeBox code={codeLife} label="State lifecycle: how often each runs" />
+          </div>
+          <div data-step="5">
+            <table class="tbl">
+              <thead>
+                <tr><th>When you call setState</th><th>Runs?</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>build()</code></td><td class="yes">yes</td></tr>
+                <tr><td><code>createState()</code></td><td class="no">no</td></tr>
+                <tr><td><code>initState()</code></td><td class="no">no</td></tr>
+                <tr><td><code>didUpdateWidget()</code></td><td class="no">no (only when the parent rebuilds)</td></tr>
+                <tr><td><code>dispose()</code></td><td class="no">no</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </Slide>
+
+      <!-- 14 ELEMENT -------------------------------------------------- -->
+      <Slide
+        n={15}
+        chapter="Element"
+        kicker="Try it"
+        title="Same Element, or a new one?"
+        lead="Tap a few times to give the State some data. Then try each button and watch the Element ID."
+      >
+        <div id="demo-el">
+          <div class="desk">
+            <div class="dbox" id="el-widget" style="--c:#38bdf8">
+              <h4>Widget (new each build)</h4>
+              <div class="val" id="el-widget-val">Counter#1</div>
+              <p class="sub" id="el-widget-sub">type: Text, key: ValueKey(1)</p>
+            </div>
+            <div class="dbox" id="el-element" style="--c:#a78bfa">
+              <h4>Element (long lived)</h4>
+              <div class="val" id="el-element-val">Element E1</div>
+              <p class="sub">holds the State and the RenderObject link</p>
+            </div>
+            <div class="dbox" id="el-state" style="--c:#fbbf24">
+              <h4>State (lives in the Element)</h4>
+              <div class="val" id="el-state-val">taps = 0</div>
+              <p class="sub">your variables, controllers, timers</p>
+            </div>
+          </div>
+          <div class="controls mt-4">
+            <button class="btn-s" id="el-tap" type="button">+1 tap (changes State)</button>
+            <button class="btn-g" id="el-rebuild" type="button">Rebuild (parent setState)</button>
+            <button class="btn-g" id="el-const" type="button">Rebuild with const widget</button>
+            <button class="btn-g warn" id="el-type" type="button">Change type (Text &harr; Icon)</button>
+            <button class="btn-g warn" id="el-key" type="button">Change key</button>
+          </div>
+          <div class="cols c2 mt-4">
+            <div class="stats">
+              <div class="stat"><span>build() runs</span><b id="el-builds">0</b></div>
+              <div class="stat"><span>Elements created</span><b id="el-created">1</b></div>
+              <div class="stat"><span>Elements disposed</span><b id="el-disposed">0</b></div>
+            </div>
+            <ul class="log" id="el-log" aria-live="polite"></ul>
+          </div>
+        </div>
+      </Slide>
+
+      <!-- 15 ELEMENT -------------------------------------------------- -->
+      <Slide
+        n={16}
+        chapter="Element"
+        kicker="Checklist"
+        title="When is an Element recreated?"
+        lead="Only in a few cases. A normal setState is not one of them."
+      >
+        <div class="cols c2">
+          <ul class="list">
+            <li data-step="1"><span class="mk no">!</span><span><b>The type changes</b> at that spot. For example Text becomes Icon, or Column becomes Row.</span></li>
+            <li data-step="2"><span class="mk no">!</span><span><b>The key changes</b> at that spot. For example ValueKey(1) becomes ValueKey(2).</span></li>
+            <li data-step="3"><span class="mk no">!</span><span><b>The widget is removed</b> from the tree: an if/else turns it off, a screen is popped, a list item is deleted. The Element is disposed.</span></li>
+            <li data-step="4"><span class="mk no">!</span><span><b>A parent Element is recreated.</b> Everything under it is recreated too.</span></li>
+            <li data-step="5"><span class="mk ok">&#10003;</span><span><b>Not recreated:</b> normal setState, or a parent rebuild that gives the same type and key. The Element is reused and the State is kept.</span></li>
+          </ul>
+
+          <div data-step="6" id="demo-keys">
+            <div class="card">
+              <h3>Why keys matter in lists</h3>
+              <p>Without keys, Flutter matches by position. Swap two items and the State stays at its old position. With keys, State follows its widget.</p>
+              <div class="controls mt-3">
+                <button class="btn-s" id="keys-swap" type="button">Swap the two items</button>
+                <label class="check"><input type="checkbox" id="keys-use" /> Use keys</label>
+              </div>
+              <div class="grid gap-2 mt-3">
+                <div class="keyrow"><span class="rl">New widgets</span><span id="keys-w" class="keyrow"></span></div>
+                <div class="keyrow"><span class="rl">Old Elements</span><span id="keys-e" class="keyrow"></span></div>
+                <div class="keyrow"><span class="rl">On screen</span><span id="keys-r" class="keyrow"></span></div>
+              </div>
+              <p class="mt-3 text-sm" id="keys-note" style="color:#c4c9d1">Each tile shows a name (from the widget) and a color (from the State).</p>
+            </div>
+          </div>
+        </div>
+      </Slide>
+
+      <!-- 16 RECAP ---------------------------------------------------- -->
+      <Slide
+        n={17}
+        chapter="Recap"
+        kicker="Use it"
+        title="What to do with this knowledge"
+        lead="Because rebuilds follow the tree, small changes in where you put setState() have a big effect."
+      >
+        <div class="cols c2">
+          <div class="grid gap-3">
+            <ul class="list">
+              <li data-step="1"><span class="mk ok">&#10003;</span><span><b>Keep setState low.</b> Put it in a small StatefulWidget that wraps only the part that changes.</span></li>
+              <li data-step="2"><span class="mk ok">&#10003;</span><span><b>Use const widgets.</b> updateChild skips them with zero work.</span></li>
+              <li data-step="3"><span class="mk ok">&#10003;</span><span><b>Split big build() methods into small widget classes</b>, not helper methods. Classes can be const and can be skipped.</span></li>
+              <li data-step="4"><span class="mk ok">&#10003;</span><span><b>Use keys</b> for lists of stateful items that can move or be removed.</span></li>
+              <li data-step="5"><span class="mk ok">&#10003;</span><span><b>For shared state</b>, use a tool that rebuilds only the listeners, such as ValueListenableBuilder, BLoC or Riverpod.</span></li>
+            </ul>
+          </div>
+          <div class="grid gap-3">
+            <div data-step="2"><CodeBox code={codeConst} label="const saves work" /></div>
+            <ul class="list" data-step="6">
+              <li><span class="mk no">&times;</span><span>Never call <code class="i">setState</code> inside <code class="i">build()</code>. It throws.</span></li>
+              <li><span class="mk no">&times;</span><span>After <code class="i">await</code>, check <code class="i">mounted</code> before setState, or you get an error when the screen is gone.</span></li>
+              <li><span class="mk no">&times;</span><span>No heavy work in <code class="i">build()</code>. It can run on every frame.</span></li>
+            </ul>
+          </div>
+        </div>
+      </Slide>
+
+      <!-- 17 RECAP ---------------------------------------------------- -->
+      <Slide
+        n={18}
+        chapter="Recap"
+        kicker="The final answers"
+        title="Both questions, answered"
+        lead="If you remember only this slide, remember these two flows."
+      >
+        <div class="grid gap-4">
+          <div class="card tint" style="--c:#38bdf8" data-step="1">
+            <h3>Q1. What triggers the rebuild, and what gets rebuilt?</h3>
+            <p>
+              setState runs your change and marks its Element dirty. In the next frame Flutter calls build() on that Element
+              and the Elements below it, except branches that are skipped.
+            </p>
+            <div class="mt-3">
+              <Flow
+                steps={[
+                  { t: 'setState()', c: 'amber' },
+                  { t: 'Element dirty', c: 'violet' },
+                  { t: 'next frame', c: 'violet' },
+                  { t: 'build()', c: 'blue' },
+                  { t: 'updateChild()', c: 'blue' },
+                  { t: 'layout/paint only if changed', c: 'green' },
+                ]}
+              />
+            </div>
+          </div>
+          <div class="card tint" style="--c:#a78bfa" data-step="2">
+            <h3>Q2. App, screen or subtree? build() or new Element?</h3>
+            <p>
+              Not the app. Not always the screen. Only the subtree under the State. build() makes new, cheap Widgets, while the
+              Element is reused when type and key match.
+            </p>
+            <div class="mt-3">
+              <Flow
+                steps={[
+                  { t: 'build()', c: 'blue' },
+                  { t: 'new Widgets', c: 'blue' },
+                  { t: 'canUpdate?', c: 'amber' },
+                  { t: 'yes: reuse Element', s: 'State kept', c: 'green' },
+                  { t: 'no: new Element', s: 'State lost', c: 'rose' },
+                ]}
+              />
+            </div>
+          </div>
+        </div>
+      </Slide>
+
+      <!-- 18 RECAP ---------------------------------------------------- -->
+      <Slide
+        n={19}
+        chapter="Recap"
+        kicker="Interview ready"
+        title="Say it in about a minute"
+        lead="A clear spoken answer you can use when someone asks how setState works. Read it once, then say it in your own words."
+      >
+        <div class="speech" id="speech">
+          {interview.split('\n\n').map((p) => <p>{p}</p>)}
+        </div>
+        <div class="controls mt-4">
+          <button class="btn-s" id="copy-speech" type="button">Copy this answer</button>
+          <span class="text-sm muted" id="copy-note" aria-live="polite"></span>
+        </div>
+        <div class="mt-5">
+          <Flow
+            label="Memory trick"
+            steps={[
+              { t: 'Mark', s: 'flag + list', c: 'amber' },
+              { t: 'Wait', s: 'next frame', c: 'violet' },
+              { t: 'Build', s: 'dirty only', c: 'blue' },
+              { t: 'Compare', s: 'reuse or recreate', c: 'blue' },
+              { t: 'Draw', s: 'only what changed', c: 'green' },
+            ]}
+          />
+        </div>
+      </Slide>
+    </div>
+
+    <footer class="deck-bottom">
+      <button class="nav-btn" id="prev" type="button" aria-label="Previous">&larr; Back</button>
+      <div class="progress">
+        <div class="bar"><i id="bar"></i></div>
+        <div class="meta"><span id="count">1 / 19</span><span class="hint" id="hint">Use &larr; &rarr; or swipe</span></div>
+      </div>
+      <button class="nav-btn primary" id="next" type="button" aria-label="Next">Next &rarr;</button>
+    </footer>
+  </div>
+
+  <script>
+    // ---------------------------------------------------------------
+    // Deck: 3D slides, steps inside a slide, chapters, keyboard, swipe.
+    // ---------------------------------------------------------------
+    const deck = document.getElementById('deck') as HTMLElement;
+    const slides = Array.from(document.querySelectorAll<HTMLElement>('.slide'));
+    const total = slides.length;
+    const bar = document.getElementById('bar') as HTMLElement;
+    const countEl = document.getElementById('count') as HTMLElement;
+    const hintEl = document.getElementById('hint') as HTMLElement;
+    const prevBtn = document.getElementById('prev') as HTMLButtonElement;
+    const nextBtn = document.getElementById('next') as HTMLButtonElement;
+    const chapterBtns = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-chapter-btn]'));
+
+    const stepsOf = (i: number) =>
+      Array.from(slides[i].querySelectorAll<HTMLElement>('[data-step]'));
+    const maxStep = (i: number) => stepsOf(i).reduce((m, el) => Math.max(m, Number(el.dataset.step)), 0);
+
+    let cur = 0;
+    let step = 0;
+
+    function applySteps() {
+      stepsOf(cur).forEach((el) => el.classList.toggle('on', Number(el.dataset.step) <= step));
+    }
+
+    function render() {
+      slides.forEach((s, i) => {
+        const o = i - cur;
+        const a = Math.abs(o);
+        s.style.setProperty('--o', String(Math.max(-2, Math.min(2, o))));
+        s.style.setProperty('--a', String(Math.min(a, 2)));
+        s.classList.toggle('is-active', a === 0);
+        s.classList.toggle('near', a === 1);
+        s.toggleAttribute('inert', a !== 0);
+        s.setAttribute('aria-hidden', a === 0 ? 'false' : 'true');
+        if (a !== 0) s.querySelectorAll('[data-step]').forEach((el) => el.classList.remove('on'));
+      });
+      applySteps();
+
+      const chapter = slides[cur].dataset.chapter;
+      chapterBtns.forEach((b) => b.setAttribute('aria-current', String(b.dataset.chapterBtn === chapter)));
+      // Scroll only the chapter bar (scrollIntoView would also scroll the whole deck sideways).
+      const activeBtn = chapterBtns.find((b) => b.dataset.chapterBtn === chapter);
+      const bar2 = activeBtn?.parentElement;
+      if (activeBtn && bar2) bar2.scrollLeft = activeBtn.offsetLeft - (bar2.clientWidth - activeBtn.offsetWidth) / 2;
+
+      const ms = maxStep(cur);
+      bar.style.width = `${((cur + (ms ? step / ms : 1)) / total) * 100}%`;
+      countEl.textContent = `${cur + 1} / ${total}`;
+      hintEl.textContent = ms && step < ms ? `Step ${step} of ${ms}. Press next to continue` : 'Use ← → or swipe';
+      prevBtn.disabled = cur === 0 && step === 0;
+      nextBtn.disabled = cur === total - 1 && step >= ms;
+      nextBtn.innerHTML = ms && step < ms ? 'Next step &darr;' : cur === total - 1 ? 'The end' : 'Next &rarr;';
+
+      history.replaceState(null, '', `#${cur + 1}`);
+      slides[cur].dispatchEvent(new CustomEvent('slideenter'));
+    }
+
+    function goTo(i: number, s = 0) {
+      cur = Math.max(0, Math.min(total - 1, i));
+      step = s;
+      render();
+    }
+    function next() {
+      if (step < maxStep(cur)) {
+        step++;
+        applySteps();
+        // refresh bar / hint without re-triggering the slide
+        const ms = maxStep(cur);
+        bar.style.width = `${((cur + (ms ? step / ms : 1)) / total) * 100}%`;
+        hintEl.textContent = step < ms ? `Step ${step} of ${ms}. Press next to continue` : 'Use ← → or swipe';
+        nextBtn.innerHTML = step < ms ? 'Next step &darr;' : cur === total - 1 ? 'The end' : 'Next &rarr;';
+        nextBtn.disabled = cur === total - 1 && step >= ms;
+        prevBtn.disabled = false;
+      } else if (cur < total - 1) {
+        goTo(cur + 1, 0);
+      }
+    }
+    function prev() {
+      if (step > 0) {
+        step--;
+        applySteps();
+        const ms = maxStep(cur);
+        bar.style.width = `${((cur + (ms ? step / ms : 1)) / total) * 100}%`;
+        hintEl.textContent = `Step ${step} of ${ms}. Press next to continue`;
+        nextBtn.innerHTML = 'Next step &darr;';
+        nextBtn.disabled = false;
+        prevBtn.disabled = cur === 0 && step === 0;
+      } else if (cur > 0) {
+        goTo(cur - 1, maxStep(cur - 1));
+      }
+    }
+
+    nextBtn.addEventListener('click', next);
+    prevBtn.addEventListener('click', prev);
+    chapterBtns.forEach((b) =>
+      b.addEventListener('click', () => {
+        const i = slides.findIndex((s) => s.dataset.chapter === b.dataset.chapterBtn);
+        if (i >= 0) goTo(i, 0);
+      })
+    );
+
+    document.addEventListener('keydown', (e) => {
+      const t = e.target as HTMLElement;
+      if (t && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key === 'ArrowRight' || e.key === 'PageDown' || (e.key === ' ' && t.tagName !== 'BUTTON')) {
+        e.preventDefault();
+        next();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prev();
+      } else if (e.key === 'Home') {
+        goTo(0);
+      } else if (e.key === 'End') {
+        goTo(total - 1, 0);
+      }
+    });
+
+    // Swipe left/right on touch screens.
+    let sx = 0;
+    let sy = 0;
+    let swipeOK = false;
+    const stage = document.getElementById('stage') as HTMLElement;
+    stage.addEventListener('pointerdown', (e) => {
+      const t = e.target as HTMLElement;
+      swipeOK = e.pointerType === 'touch' && !t.closest('button, input, label, pre, .log');
+      sx = e.clientX;
+      sy = e.clientY;
+    });
+    stage.addEventListener('pointerup', (e) => {
+      if (!swipeOK) return;
+      const dx = e.clientX - sx;
+      const dy = e.clientY - sy;
+      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) (dx < 0 ? next : prev)();
+      swipeOK = false;
+    });
+
+    // Start from the link: #6 or #6.2 (slide 6, step 2).
+    const m = location.hash.match(/^#(\d+)(?:\.(\d+))?$/);
+    const startSlide = m ? Math.max(0, Math.min(total - 1, Number(m[1]) - 1)) : 0;
+    cur = startSlide;
+    step = m && m[2] ? Math.min(Number(m[2]), maxStep(startSlide)) : 0;
+    render();
+    // Wait one frame before enabling the heavy transitions so the first paint is clean.
+    requestAnimationFrame(() => deck.classList.add('ready'));
+
+    const onEnter = (id: string, fn: () => void) => {
+      const el = document.getElementById(id)?.closest<HTMLElement>('.slide');
+      el?.addEventListener('slideenter', fn);
+    };
+    const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+    const addLog = (ul: HTMLElement, text: string, kind: string) => {
+      const li = document.createElement('li');
+      li.className = `k-${kind}`;
+      li.textContent = text;
+      ul.appendChild(li);
+      ul.scrollTop = ul.scrollHeight;
+    };
+
+    // ---------------------------------------------------------------
+    // Demo 1 (slide 2): without vs with setState
+    // ---------------------------------------------------------------
+    {
+      let a = 0;
+      let b = 0;
+      const pop = (el: HTMLElement) => {
+        el.classList.remove('pop');
+        void el.offsetWidth;
+        el.classList.add('pop');
+      };
+      $('why-a-btn').addEventListener('click', () => {
+        a++;
+        $('why-a-var').textContent = String(a); // the variable changes, the screen does not
+      });
+      $('why-b-btn').addEventListener('click', () => {
+        b++;
+        $('why-b-var').textContent = String(b);
+        $('why-b-screen').textContent = String(b);
+        pop($('why-b-screen'));
+      });
+    }
+
+    // ---------------------------------------------------------------
+    // Demo 2 (slide 5): dirty flag and batching
+    // ---------------------------------------------------------------
+    {
+      const log = $('batch-log');
+      let calls = 0;
+      let builds = 0;
+      let scheduled = false;
+      const FRAME_MS = 1800; // slowed down so you can see it
+
+      const setCalls = () => ($('batch-calls').textContent = String(calls));
+      function schedule() {
+        scheduled = true;
+        $('batch-dirty').innerHTML = '<span class="ditem">CounterPage</span>';
+        $('batch-frame').textContent = 'Frame scheduled. Waiting for the next VSync (slowed down for you)...';
+        const t0 = performance.now();
+        const timer = window.setInterval(() => {
+          const p = Math.min(1, (performance.now() - t0) / FRAME_MS);
+          $('batch-bar').style.width = `${p * 100}%`;
+          if (p >= 1) {
+            clearInterval(timer);
+            frame();
+          }
+        }, 40);
+      }
+      function frame() {
+        builds++;
+        $('batch-builds').textContent = String(builds);
+        $('batch-builds').classList.remove('flash');
+        void $('batch-builds').offsetWidth;
+        $('batch-builds').classList.add('flash');
+        addLog(log, `FRAME: buildScope() --> CounterPage.build() runs ONCE (for ${calls} call${calls === 1 ? '' : 's'})`, 'blue');
+        calls = 0;
+        setCalls();
+        scheduled = false;
+        $('batch-dirty').innerHTML = '<span class="empty">Empty. Nothing to rebuild.</span>';
+        $('batch-bar').style.width = '0';
+        $('batch-frame').textContent = 'Frame done. Idle again.';
+      }
+      function call() {
+        calls++;
+        setCalls();
+        if (!scheduled) {
+          addLog(log, 'setState() --> markNeedsBuild() --> added to dirty list, frame requested', 'amber');
+          schedule();
+        } else {
+          addLog(log, 'setState() --> already dirty, nothing to do', 'slate');
+        }
+      }
+      $('batch-call').addEventListener('click', call);
+      $('batch-five').addEventListener('click', () => {
+        for (let i = 0; i < 5; i++) call();
+      });
+      onEnter('demo-batch', () => {
+        if (!log.children.length) addLog(log, 'Press "Call setState()" to start.', 'slate');
+      });
+    }
+
+    // ---------------------------------------------------------------
+    // Demo 3 (slide 12): which Elements are rebuilt?
+    // ---------------------------------------------------------------
+    {
+      const tree = $('tree');
+      const items = Array.from(tree.querySelectorAll<HTMLElement>('li[data-n]'));
+      const byId = new Map(items.map((li) => [li.dataset.n as string, li]));
+      const nameOf = (li: HTMLElement) => (li.querySelector('.tn')?.firstChild?.textContent || '').trim();
+      const kids = (li: HTMLElement) => Array.from(li.querySelectorAll<HTMLElement>(':scope > ul > li'));
+      const log = $('tree-log');
+      let owner: 'home' | 'cbox' = 'home';
+      let timers: number[] = [];
+
+      function reset() {
+        timers.forEach(clearTimeout);
+        timers = [];
+        items.forEach((li) => li.removeAttribute('data-status'));
+        log.innerHTML = '';
+        ['tree-n-rebuilt', 'tree-n-skipped', 'tree-n-untouched'].forEach((id) => ($(id).textContent = '0'));
+        $('tree-verdict').textContent = 'Press the button to see what happens.';
+      }
+      function markOwner() {
+        items.forEach((li) => li.setAttribute('data-owner', String(li.dataset.n === owner)));
+      }
+      function setConstLabels() {
+        const on = ($('tree-const') as HTMLInputElement).checked;
+        items.forEach((li) => {
+          if (li.dataset.canconst) {
+            const s = li.querySelector('small');
+            if (s) s.textContent = on ? 'const' : '';
+          }
+        });
+      }
+
+      function run() {
+        reset();
+        const constOn = ($('tree-const') as HTMLInputElement).checked;
+        const seq: { li: HTMLElement; status: string; msg: string; kind: string }[] = [];
+        const rootLi = byId.get(owner) as HTMLElement;
+        const rootName = nameOf(rootLi);
+        seq.push({
+          li: rootLi,
+          status: 'source',
+          msg: `${rootName} calls setState() --> its Element is dirty --> next frame: ${rootName}.build() runs`,
+          kind: 'amber',
+        });
+        const touched = new Set<HTMLElement>([rootLi]);
+        const skipped = new Set<HTMLElement>();
+        const visit = (li: HTMLElement) => {
+          kids(li).forEach((k) => {
+            const name = nameOf(k);
+            if (constOn && k.dataset.canconst) {
+              skipped.add(k);
+              seq.push({
+                li: k,
+                status: 'skipped',
+                msg: `${name}: const, same object --> identical --> SKIPPED (no build)`,
+                kind: 'slate',
+              });
+              return;
+            }
+            touched.add(k);
+            const extra = name === 'Column' ? ' (a render widget has no build(): its Element is just updated)' : ' --> build() runs';
+            seq.push({
+              li: k,
+              status: 'rebuilt',
+              msg: `${name}: new widget, same type and key --> canUpdate --> Element reused${extra}`,
+              kind: 'blue',
+            });
+            visit(k);
+          });
+        };
+        visit(rootLi);
+
+        const untouched = items.filter((li) => !touched.has(li) && !skipped.has(li));
+        seq.forEach((s, i) => {
+          timers.push(
+            window.setTimeout(() => {
+              s.li.setAttribute('data-status', s.status);
+              addLog(log, s.msg, s.kind);
+            }, 350 * i)
+          );
+        });
+        timers.push(
+          window.setTimeout(() => {
+            untouched.forEach((li) => li.setAttribute('data-status', 'untouched'));
+            $('tree-n-rebuilt').textContent = String(touched.size);
+            $('tree-n-skipped').textContent = String(skipped.size);
+            $('tree-n-untouched').textContent = String(untouched.length);
+            addLog(
+              log,
+              `Not touched: ${untouched.map(nameOf).join(', ')}`,
+              'slate'
+            );
+            const v = $('tree-verdict');
+            if (owner === 'home') {
+              v.innerHTML =
+                `<b>Not the whole app.</b> MyApp and MaterialApp were never touched. ` +
+                `Only the subtree under HomePage was rebuilt` +
+                (skipped.size ? `, and the const widgets were skipped.` : `. Try the const checkbox to cut more.`);
+            } else {
+              v.innerHTML =
+                `<b>Just ${touched.size} Elements.</b> HomePage, Header and Footer did not even run build(). ` +
+                `That is why a small StatefulWidget is cheaper than one big one.`;
+            }
+          }, 350 * seq.length + 150)
+        );
+      }
+
+      function choose(which: 'home' | 'cbox') {
+        owner = which;
+        $('tree-a').setAttribute('aria-pressed', String(which === 'home'));
+        $('tree-b').setAttribute('aria-pressed', String(which === 'cbox'));
+        markOwner();
+        run();
+      }
+      $('tree-a').addEventListener('click', () => choose('home'));
+      $('tree-b').addEventListener('click', () => choose('cbox'));
+      $('tree-run').addEventListener('click', run);
+      $('tree-const').addEventListener('change', () => {
+        setConstLabels();
+        run();
+      });
+      markOwner();
+      onEnter('demo-tree', () => {
+        setConstLabels();
+        reset();
+        // Show one run by itself, after the slide has flown in.
+        timers.push(window.setTimeout(run, 1000));
+      });
+    }
+
+    // ---------------------------------------------------------------
+    // Demo 4 (slide 15): same Element or a new one?
+    // ---------------------------------------------------------------
+    {
+      const log = $('el-log');
+      let widgetNo = 1;
+      let elementNo = 1;
+      let taps = 0;
+      let kind = 'Text';
+      let key = 1;
+      let builds = 0;
+      let created = 1;
+      let disposed = 0;
+
+      const flash = (id: string) => {
+        const el = $(id);
+        el.classList.remove('pulse');
+        void el.offsetWidth;
+        el.classList.add('pulse');
+      };
+      function paint() {
+        $('el-widget-val').textContent = `${kind}#${widgetNo}`;
+        $('el-widget-sub').textContent = `type: ${kind}, key: ValueKey(${key})`;
+        $('el-element-val').textContent = `Element E${elementNo}`;
+        $('el-state-val').textContent = `taps = ${taps}`;
+        $('el-builds').textContent = String(builds);
+        $('el-created').textContent = String(created);
+        $('el-disposed').textContent = String(disposed);
+      }
+      function recreate(why: string) {
+        widgetNo++;
+        builds++;
+        const old = elementNo;
+        elementNo++;
+        created++;
+        disposed++;
+        taps = 0;
+        paint();
+        flash('el-widget');
+        flash('el-element');
+        flash('el-state');
+        addLog(log, `${why} --> canUpdate = false`, 'rose');
+        addLog(log, `Old Element E${old} disposed (State lost). New Element E${elementNo} created, taps = 0`, 'rose');
+      }
+
+      $('el-tap').addEventListener('click', () => {
+        taps++;
+        builds++;
+        paint();
+        flash('el-state');
+        addLog(log, `setState() inside the State --> build() runs. Widget and Element unchanged, taps = ${taps}`, 'amber');
+      });
+      $('el-rebuild').addEventListener('click', () => {
+        widgetNo++;
+        builds++;
+        paint();
+        flash('el-widget');
+        addLog(log, `Parent rebuilt --> new widget (#${widgetNo}), same type and key --> Element E${elementNo} REUSED, State kept (taps = ${taps})`, 'blue');
+      });
+      $('el-const').addEventListener('click', () => {
+        addLog(log, `const widget --> identical(old, new) --> SKIPPED. build() did not run at all`, 'slate');
+      });
+      $('el-type').addEventListener('click', () => {
+        kind = kind === 'Text' ? 'Icon' : 'Text';
+        recreate(`Type changed (${kind === 'Icon' ? 'Text to Icon' : 'Icon to Text'})`);
+      });
+      $('el-key').addEventListener('click', () => {
+        key++;
+        recreate(`Key changed to ValueKey(${key})`);
+      });
+      onEnter('demo-el', () => {
+        if (!log.children.length) addLog(log, 'Tap a few times, then try the buttons.', 'slate');
+      });
+    }
+
+    // ---------------------------------------------------------------
+    // Demo 5 (slide 16): why keys matter
+    // ---------------------------------------------------------------
+    {
+      type Item = { name: string; key: string };
+      const items: Item[] = [
+        { name: 'Ali', key: 'ali' },
+        { name: 'Sara', key: 'sara' },
+      ];
+      // The colors live in each Element's State, created for the first order.
+      const elements = [
+        { key: 'ali', color: '#fb7185', label: 'rose' },
+        { key: 'sara', color: '#34d399', label: 'green' },
+      ];
+      let order: Item[] = items.slice();
+      const useKeys = $('keys-use') as HTMLInputElement;
+
+      const chip = (text: string, color?: string, cls = '') => {
+        const s = document.createElement('span');
+        s.className = `kchip ${cls}`;
+        s.textContent = text;
+        if (color) s.style.setProperty('--c', color);
+        return s;
+      };
+
+      function paint() {
+        const w = $('keys-w');
+        const e = $('keys-e');
+        const r = $('keys-r');
+        w.innerHTML = '';
+        e.innerHTML = '';
+        r.innerHTML = '';
+        order.forEach((it) => w.appendChild(chip(it.name, '#38bdf8')));
+        elements.forEach((el, i) => e.appendChild(chip(`E${i + 1} (${el.label})`, el.color)));
+
+        let allGood = true;
+        order.forEach((it, pos) => {
+          // With keys, Flutter finds the Element by key. Without keys, it matches by position.
+          const el = useKeys.checked ? elements.find((x) => x.key === it.key)! : elements[pos];
+          const good = el.key === it.key;
+          if (!good) allGood = false;
+          r.appendChild(chip(`${it.name} + ${el.label}`, el.color, `res ${good ? 'good' : 'bad'}`));
+        });
+        const orderChanged = order[0].key !== items[0].key;
+        $('keys-note').textContent = !orderChanged
+          ? 'Each tile shows a name (from the widget) and a color (from the State). Press swap.'
+          : allGood
+          ? 'Correct. With keys, each Element follows its own widget, so the colors moved with the names.'
+          : 'Wrong. The names moved, but the colors stayed in place. The State stayed at its old position.';
+      }
+      $('keys-swap').addEventListener('click', () => {
+        order = order.slice().reverse();
+        paint();
+      });
+      useKeys.addEventListener('change', paint);
+      paint();
+    }
+
+    // ---------------------------------------------------------------
+    // Copy button (last slide)
+    // ---------------------------------------------------------------
+    // The demos above listen for "slideenter". Send it once now for the slide we started on.
+    slides[cur].dispatchEvent(new CustomEvent('slideenter'));
+
+    $('copy-speech').addEventListener('click', async () => {
+      const text = Array.from(document.querySelectorAll('#speech p'))
+        .map((p) => p.textContent)
+        .join('\n\n');
+      try {
+        await navigator.clipboard.writeText(text);
+        $('copy-note').textContent = 'Copied.';
+      } catch {
+        $('copy-note').textContent = 'Could not copy. Select the text and copy it.';
+      }
+    });
+  </script>
+</StudyLayout>
