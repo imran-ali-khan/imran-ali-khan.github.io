@@ -28,7 +28,7 @@ const SY = (i: number) => 78 + i * 100;
 
 const interview = `setState runs my callback and marks that Element dirty. Flutter schedules a frame. In that frame, it calls build() only on dirty Elements, parents first. build() returns new widgets. updateChild compares old and new: same object, skip; same type and key, reuse the Element; otherwise a new Element, and the State is lost. So only the subtree under that State rebuilds, not the whole app. RenderObjects update only when a value really changed.`;
 
-const labels = ['Start', 'Words', 'Why', 'Trees', 'Journey', 'Batching', 'Compare', 'Reach', 'Recap', 'Expert'];
+const labels = ['Start', 'Words', 'Why', 'Trees', 'Journey', 'Batching', 'Compare', 'Effect', 'Recap', 'Expert'];
 ---
 
 <StudyLayout
@@ -313,26 +313,33 @@ const labels = ['Start', 'Words', 'Why', 'Trees', 'Journey', 'Batching', 'Compar
       </div>
     </section>
 
-    <!-- 6 · Reach (3D) -->
-    <section class="act" id="act-6" data-label="Reach" aria-label="Reach">
+    <!-- 6 · Effect in the three trees (3D) -->
+    <section class="act" id="act-6" data-label="Effect" aria-label="Effect in the three trees">
       <div class="panel">
-        <p class="kick"><i>7</i>Where it reaches</p>
-        <h2>How far does it <em>reach</em>?</h2>
+        <p class="kick"><i>7</i>Where it happens</p>
+        <h2>What happens in <em>each tree</em>?</h2>
+        <div class="explain"><b>In simple words</b><p>setState() touches all three trees, but in different ways. Widgets: <b>new ones are made</b>. Elements: <b>the same ones are reused</b>. RenderObjects: <b>only changed values repaint</b>.</p><p class="think"><i>Like a restaurant:</i> a new order slip, the same waiter, and the chef cooks again only what changed.</p></div>
         <div class="seg">
           <button class="btn" id="r-a" type="button" aria-pressed="true">State in HomePage</button>
           <button class="btn" id="r-b" type="button" aria-pressed="false">State in CounterBox</button>
         </div>
-        <div class="explain"><b>In simple words</b><p>Only the Element that called setState() and the Elements below it rebuild. Parents and siblings stay as they are. So call setState() in a small widget.</p><p class="think"><i>Like a restaurant:</i> only your table is updated, not the whole restaurant.</p></div>
         <label class="check"><input type="checkbox" id="r-const" /> Header and Footer are <code>const</code></label>
+        <label class="check"><input type="checkbox" id="r-type" /> The Text changes type (Text becomes Icon)</label>
         <div class="ctl"><button class="btn yellow" id="r-go" type="button">Call setState()</button></div>
+        <ol class="steps4" id="r-steps">
+          <li><i>1</i><span>The Element is marked <b>dirty</b>.</span></li>
+          <li><i>2</i><span><code>build()</code> runs: <b>new widgets</b> are created.</span></li>
+          <li><i>3</i><span id="r-s3">Each Element is checked: reused, not recreated.</span></li>
+          <li><i>4</i><span>RenderObjects: <b>only changed values</b> repaint.</span></li>
+        </ol>
         <div class="stats">
-          <div class="stat"><span>rebuilt</span><b id="r-n1">0</b></div>
-          <div class="stat"><span>skipped</span><b id="r-n2">0</b></div>
-          <div class="stat"><span>untouched</span><b id="r-n3">0</b></div>
+          <div class="stat"><span>new widgets</span><b id="r-n1">0</b></div>
+          <div class="stat"><span>new Elements</span><b id="r-n2">0</b></div>
+          <div class="stat"><span>repainted</span><b id="r-n3">0</b></div>
         </div>
         <div class="result" id="r-verdict"><b>Result</b><p>Press the button.</p></div>
-        <Flow label="How far it goes" items={[{ t: 'setState()', c: 'y' }, { t: 'this Element dirty', c: 'y' }, { t: 'rebuild down only', c: 'b' }, { t: 'const widgets skipped', c: 'n' }, { t: 'parents untouched', c: 'g' }]} />
-        <Src links={[{ label: 'Performance best practices', href: 'https://docs.flutter.dev/perf/best-practices' }, { label: 'InheritedWidget', href: 'https://api.flutter.dev/flutter/widgets/InheritedWidget-class.html' }]} />
+        <Flow label="Three trees" items={[{ t: 'Widget: NEW', c: 'b' }, { t: 'Element: REUSED', c: 'y' }, { t: 'RenderObject: UPDATED', c: 'g' }]} />
+        <Src links={[{ label: 'Architecture overview', href: 'https://docs.flutter.dev/resources/architectural-overview' }, { label: 'Performance best practices', href: 'https://docs.flutter.dev/perf/best-practices' }, { label: 'updateRenderObject', href: D + 'RenderObjectWidget/updateRenderObject.html' }]} />
       </div>
       <div class="scene tint">
         <div class="reach" id="reach"></div>
