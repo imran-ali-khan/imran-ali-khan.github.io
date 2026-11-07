@@ -4,9 +4,10 @@ interface Props {
   links: { label: string; href: string }[];
 }
 const { links } = Astro.props;
+import FlutterLogo from './FlutterLogo.astro';
 ---
 
 <p class="src">
-  <span>Flutter docs:</span>
+  <span class="srcl"><FlutterLogo size={15} />Flutter docs:</span>
   {links.map((l) => <a href={l.href} target="_blank" rel="noopener noreferrer">{l.label}</a>)}
 </p>

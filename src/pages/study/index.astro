@@ -1,5 +1,6 @@
 ---
 import StudyLayout from '@/layouts/StudyLayout.astro';
+import FlutterLogo from '@/components/study/FlutterLogo.astro';
 import { episodes, seriesName, seriesIntro } from '@/data/study';
 
 const base = import.meta.env.BASE_URL;
@@ -9,6 +10,7 @@ const base = import.meta.env.BASE_URL;
   <div class="study-bg"></div>
   <div class="study-page">
     <div class="study-sheet">
+      <p class="brandrow big"><FlutterLogo size={44} /><span>Flutter</span></p>
       <h1 class="study-title">Flutter<br />Under <em>the Hood</em></h1>
       <p class="study-intro">{seriesIntro}</p>
       {

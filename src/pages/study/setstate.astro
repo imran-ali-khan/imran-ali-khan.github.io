@@ -4,6 +4,7 @@ import Mascot from '@/components/study/Mascot.astro';
 import IsoStack from '@/components/study/IsoStack.astro';
 import Flow from '@/components/study/Flow.astro';
 import Src from '@/components/study/Src.astro';
+import FlutterLogo from '@/components/study/FlutterLogo.astro';
 import pointer from '@/icons/lucide/pointer.svg?raw';
 import flag from '@/icons/lucide/flag.svg?raw';
 import timer from '@/icons/lucide/timer.svg?raw';
@@ -38,7 +39,7 @@ const labels = ['Start', 'Words', 'Why', 'Trees', 'Journey', 'Batching', 'Compar
 
   <header class="bar">
     <a href={`${base}study/`}>&larr; Study</a>
-    <span class="brand"><b>F</b>Flutter Under the Hood</span>
+    <span class="brand"><b><FlutterLogo size={18} /></b>Flutter Under the Hood</span>
     <span class="ep">Episode 01</span>
   </header>
 
@@ -46,6 +47,7 @@ const labels = ['Start', 'Words', 'Why', 'Trees', 'Journey', 'Batching', 'Compar
     <!-- 0 · Start -->
     <section class="act on" id="act-0" data-label="Start" aria-label="Start">
       <div class="panel">
+        <p class="brandrow"><FlutterLogo size={30} /><span>Flutter</span><i>Episode 01</i></p>
         <h1>What happens when you call <em>setState()</em>?</h1>
         <p class="lead">A visual guide. Simple words.</p>
         <div class="explain"><b>In simple words</b><p>setState() tells Flutter: my data changed, please redraw. We will see how, step by step, with a restaurant story.</p></div>
@@ -54,7 +56,7 @@ const labels = ['Start', 'Words', 'Why', 'Trees', 'Journey', 'Batching', 'Compar
         <p class="cap" style="min-height:0;font-size:15px">Use the arrow keys, swipe, or the buttons below.</p>
         <Src links={[{ label: 'State.setState', href: 'https://api.flutter.dev/flutter/widgets/State/setState.html' }]} />
       </div>
-      <div class="scene"><IsoStack id="iso-intro" /></div>
+      <div class="scene"><span class="logo-badge" id="logo-badge"><FlutterLogo size={64} /></span><IsoStack id="iso-intro" /></div>
     </section>
 
 
