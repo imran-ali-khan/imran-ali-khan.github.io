@@ -3,7 +3,7 @@ import { q, qa, reduce, still, type Scene, type SceneInit } from './util';
 
 type Loader = () => Promise<{ default: SceneInit }>;
 
-// Each act is its own chunk. The heavy one (3D) is only fetched when you get close to it.
+// Each act is its own chunk, fetched shortly before it is needed.
 const loaders: Loader[] = [
   () => import('./scenes/intro'),
   () => import('./scenes/words'),
@@ -12,7 +12,7 @@ const loaders: Loader[] = [
   () => import('./scenes/journey'),
   () => import('./scenes/batch'),
   () => import('./scenes/compare'),
-  () => import('./scenes/reach'),
+  () => import('./scenes/film'),
   () => import('./scenes/answers'),
   () => import('./scenes/expert'),
 ];
@@ -111,13 +111,13 @@ export function initDeck() {
     else if (e.key === 'End') go(total - 1);
   });
 
-  // swipe on touch screens (not on buttons, 3D, or text)
+  // swipe on touch screens (not on buttons or text)
   let sx = 0;
   let sy = 0;
   let ok = false;
   const stage = q('#stage');
   stage.addEventListener('pointerdown', (e) => {
-    ok = e.pointerType === 'touch' && !(e.target as HTMLElement).closest('button, input, label, details, canvas, pre');
+    ok = e.pointerType === 'touch' && !(e.target as HTMLElement).closest('button, input, label, details, pre');
     sx = e.clientX;
     sy = e.clientY;
   });
