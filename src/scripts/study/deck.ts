@@ -4,20 +4,34 @@ import { q, qa, reduce, still, type Scene, type SceneInit } from './util';
 type Loader = () => Promise<{ default: SceneInit }>;
 
 // Each act is its own chunk, fetched shortly before it is needed.
-const loaders: Loader[] = [
-  () => import('./scenes/intro'),
-  () => import('./scenes/words'),
-  () => import('./scenes/why'),
-  () => import('./scenes/trees'),
-  () => import('./scenes/journey'),
-  () => import('./scenes/batch'),
-  () => import('./scenes/compare'),
-  () => import('./scenes/film'),
-  () => import('./scenes/answers'),
-  () => import('./scenes/expert'),
-];
+const episodes: Record<string, Loader[]> = {
+  setstate: [
+    () => import('./scenes/intro'),
+    () => import('./scenes/words'),
+    () => import('./scenes/why'),
+    () => import('./scenes/trees'),
+    () => import('./scenes/journey'),
+    () => import('./scenes/batch'),
+    () => import('./scenes/compare'),
+    () => import('./scenes/film'),
+    () => import('./scenes/answers'),
+    () => import('./scenes/expert'),
+  ],
+  keys: [
+    () => import('./scenes/keys/intro'),
+    () => import('./scenes/keys/why'),
+    () => import('./scenes/keys/what'),
+    () => import('./scenes/keys/powers'),
+    () => import('./scenes/keys/when'),
+    () => import('./scenes/keys/downside'),
+    () => import('./scenes/keys/cheat'),
+    () => import('./scenes/keys/recap'),
+    () => import('./scenes/keys/expert'),
+  ],
+};
 
-export function initDeck() {
+export function initDeck(episode: keyof typeof episodes = 'setstate') {
+  const loaders = episodes[episode];
   if (still) document.documentElement.classList.add('still');
   if (reduce) gsap.globalTimeline.timeScale(60);
   document.addEventListener('visibilitychange', () => gsap.globalTimeline.paused(document.hidden));

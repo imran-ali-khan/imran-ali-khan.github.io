@@ -1,0 +1,293 @@
+---
+import StudyLayout from '@/layouts/StudyLayout.astro';
+import Flow from '@/components/study/Flow.astro';
+import Src from '@/components/study/Src.astro';
+import FlutterLogo from '@/components/study/FlutterLogo.astro';
+
+const base = import.meta.env.BASE_URL;
+const A = 'https://api.flutter.dev/flutter/';
+const labels = ['Start', 'Why', 'What', 'Powers', 'When', 'When not', 'Cheat sheet', 'Recap', 'Expert'];
+---
+
+<StudyLayout
+  title="GlobalKey or ValueKey? Explained visually | Flutter Under the Hood"
+  description="A short visual guide to Flutter keys: why they exist, when to use GlobalKey or ValueKey, and the cost of overusing GlobalKey."
+>
+  <div class="study-bg"></div>
+
+  <header class="bar">
+    <a href={`${base}study/`}>&larr; Study</a>
+    <span class="brand"><b><FlutterLogo size={18} /></b>Flutter Under the Hood</span>
+    <span class="ep">Episode 02</span>
+  </header>
+
+  <main class="stage keysep" id="stage">
+    <!-- 0 · Start -->
+    <section class="act on" id="act-0" data-label="Start" aria-label="Start">
+      <div class="panel">
+        <p class="brandrow"><FlutterLogo size={30} /><span>Flutter</span><i>Episode 02</i></p>
+        <h1>Keys: <em>GlobalKey</em> or <em>ValueKey</em>?</h1>
+        <p class="lead">A visual guide. Simple words.</p>
+        <div class="explain"><b>In simple words</b><p>A Key is a name tag for a widget. It helps Flutter know which widget is which when the screen rebuilds. We will see when each key helps, and when GlobalKey is too much.</p></div>
+        <ol class="qlist deskonly">
+          <li><i>1</i>When do you pick GlobalKey over ValueKey?</li>
+          <li><i>2</i>What goes wrong if you overuse GlobalKey?</li>
+        </ol>
+        <div class="ctl"><button class="btn primary" id="start" type="button">Start &rarr;</button><button class="btn" id="skip" type="button">I know Flutter: expert answer</button></div>
+        <p class="cap deskonly" style="min-height:0;font-size:15px">New to Flutter? <a class="inl" href={`${base}study/setstate/`}>Watch Episode 1</a> first.</p>
+      </div>
+      <div class="scene"><svg id="ki-svg" viewBox="0 0 900 680" role="img" aria-label="Three tables, each with a numbered name tag"></svg></div>
+      <div class="strip">
+        <Flow label="The whole story" items={[{ t: 'no key', c: 'n' }, { t: 'ValueKey', c: 'b' }, { t: 'GlobalKey', c: 'y' }, { t: 'its cost', c: 'r' }]} />
+        <Src links={[{ label: 'Key', href: A + 'foundation/Key-class.html' }, { label: 'GlobalKey', href: A + 'widgets/GlobalKey-class.html' }]} />
+      </div>
+    </section>
+
+    <!-- 1 · Why -->
+    <section class="act" id="act-1" data-label="Why" aria-label="Why keys exist">
+      <div class="panel">
+        <p class="kick"><i>1</i>Why</p>
+        <h2>Why keys? <em>Position</em> is a bad name tag.</h2>
+        <div class="explain"><b>In simple words</b><p class="lg">When a list changes, Flutter matches each new widget to an old Element by <b>type and position</b>. The State lives in the Element, not in the widget.</p><p class="lg think"><i>Like a restaurant:</i> with no table numbers, the waiter serves "the table in spot 1". Swap the tables and he keeps the wrong guest's notes.</p><p class="sm">Flutter matches new widgets to old Elements by <b>position</b>, and the State lives in the Element. <i>Like a restaurant:</i> swap the tables and the waiter keeps the wrong guest's notes.</p></div>
+        <p class="cap" id="kw-cap" aria-live="polite"></p>
+        <div class="ctl">
+          <button class="btn yellow" id="kw-move" type="button">Move Ali to the end</button>
+          <button class="btn" id="kw-key" type="button" aria-pressed="false">Use ValueKey</button>
+          <button class="btn" id="kw-reset" type="button">Reset</button>
+        </div>
+      </div>
+      <div class="scene"><svg id="kw-svg" viewBox="0 0 900 680" role="img" aria-label="Three list items with a heart State each. Moving one item without keys gives its heart to the wrong item."></svg></div>
+      <div class="strip">
+        <div class="flowbox jflow"><p class="flowlabel">What Flutter does</p><div id="kw-flow" aria-live="polite"></div></div>
+        <Src links={[{ label: 'Key', href: A + 'foundation/Key-class.html' }, { label: 'Widget.canUpdate', href: A + 'widgets/Widget/canUpdate.html' }]} />
+      </div>
+    </section>
+
+    <!-- 2 · What -->
+    <section class="act" id="act-2" data-label="What" aria-label="What a key is">
+      <div class="panel">
+        <p class="kick"><i>2</i>What</p>
+        <h2>What is a Key? <em>Local</em> or <em>global</em>.</h2>
+        <div class="explain"><b>In simple words</b><p class="lg">A new widget reuses an old Element only if the <b>key matches</b>. A local key must be unique among siblings. A GlobalKey must be unique in the whole app.</p><p class="lg think"><i>Like a restaurant:</i> a table number is unique in one room. A GlobalKey is a badge unique in the whole restaurant.</p><p class="sm">A new widget reuses an Element only if the <b>key matches</b>. Local keys: unique among siblings. GlobalKey: unique in the whole app. <i>Like a restaurant:</i> a table number, or a badge for the whole place.</p></div>
+        <div class="seg">
+          <button class="btn" id="kk-local" type="button" aria-pressed="true">ValueKey</button>
+          <button class="btn" id="kk-global" type="button" aria-pressed="false">GlobalKey</button>
+        </div>
+        <div class="seg">
+          <button class="btn" id="kk-other" type="button" aria-pressed="false">A in both columns</button>
+          <button class="btn warn" id="kk-same" type="button" aria-pressed="false">A twice, same column</button>
+        </div>
+        <p class="cap nocap" id="kk-cap" aria-live="polite"></p>
+        <div class="result" id="kk-result"><b>Result</b><p>Pick a place for the second A.</p></div>
+      </div>
+      <div class="scene"><svg id="kk-svg" viewBox="0 0 900 680" role="img" aria-label="Two parent columns with keyed children. A second key A is added in different places."></svg></div>
+      <div class="strip">
+        <Flow label="Local keys" items={[{ t: 'Key', c: 'n' }, { t: 'LocalKey', c: 'b' }, { t: 'ValueKey · ObjectKey · UniqueKey', c: 'b' }]} />
+        <Flow label="Global key" items={[{ t: 'Key', c: 'n' }, { t: 'GlobalKey', c: 'y' }]} />
+        <Src links={[{ label: 'LocalKey', href: A + 'foundation/LocalKey-class.html' }, { label: 'ValueKey', href: A + 'foundation/ValueKey-class.html' }, { label: 'GlobalKey', href: A + 'widgets/GlobalKey-class.html' }]} />
+      </div>
+    </section>
+
+    <!-- 3 · What GlobalKey can do -->
+    <section class="act" id="act-3" data-label="Powers" aria-label="What a GlobalKey can do">
+      <div class="panel">
+        <p class="kick"><i>3</i>What it can do</p>
+        <h2><em>GlobalKey</em>: three superpowers.</h2>
+        <div class="explain"><b>In simple words</b><p class="lg">A GlobalKey finds one exact widget from anywhere: its <b>State</b>, its <b>size</b>, or it can <b>move</b> to a new parent and keep its State.</p><p class="lg think"><i>Like a restaurant:</i> the manager calls one waiter by badge from another room, or carries a whole table, guests and notes included, to a new room.</p><p class="sm">A GlobalKey finds one exact widget from anywhere: its <b>State</b>, its <b>size</b>, or <b>move</b> it and keep its State. <i>Like a restaurant:</i> the manager calls one waiter by badge.</p></div>
+        <div class="seg">
+          <button class="btn kp-m" type="button" aria-pressed="true">Reach State</button>
+          <button class="btn kp-m" type="button" aria-pressed="false">Move it</button>
+          <button class="btn kp-m" type="button" aria-pressed="false">Measure</button>
+        </div>
+        <div class="ctl">
+          <button class="btn yellow" id="kp-run" type="button">Press Submit</button>
+          <label class="check" id="kp-keybox" hidden><input type="checkbox" id="kp-keyon" checked /> With GlobalKey</label>
+        </div>
+        <p class="cap nocap" id="kp-cap" aria-live="polite"></p>
+        <div class="result" id="kp-result"><b>Result</b><p>Press the button.</p></div>
+      </div>
+      <div class="scene"><svg id="kp-svg" viewBox="0 0 900 680" role="img" aria-label="Three things a GlobalKey can do: reach a State, move a widget and keep its State, read its size"></svg></div>
+      <div class="strip">
+        <Flow label="Three uses" items={[{ t: 'currentState: call its methods', c: 'y' }, { t: 'currentContext: size, position', c: 'g' }, { t: 'reparent: move + keep State', c: 'b' }]} />
+        <Src links={[{ label: 'GlobalKey', href: A + 'widgets/GlobalKey-class.html' }, { label: 'currentState', href: A + 'widgets/GlobalKey/currentState.html' }]} />
+      </div>
+    </section>
+
+    <!-- 4 · When -->
+    <section class="act" id="act-4" data-label="When" aria-label="When to use which key">
+      <div class="panel">
+        <p class="kick"><i>4</i>When</p>
+        <h2><em>When</em> do I use which key?</h2>
+        <div class="explain"><b>In simple words</b><p class="lg">Start with <b>no key</b>. Add a <b>ValueKey</b> when a list changes. Pick a <b>GlobalKey</b> only when you must reach or move one widget.</p><p class="lg think"><i>Like a restaurant:</i> table numbers handle almost everything. The manager's badge is for special jobs.</p><p class="sm">Start with <b>no key</b>. <b>ValueKey</b> when a list changes. <b>GlobalKey</b> only to reach or move one widget. <i>Like a restaurant:</i> table numbers first.</p></div>
+        <div class="chips" role="group" aria-label="Pick a situation">
+          <button class="btn kq-s" type="button" aria-pressed="false">Todo list</button>
+          <button class="btn kq-s" type="button" aria-pressed="false">Form + button</button>
+          <button class="btn kq-s" type="button" aria-pressed="false">Video player</button>
+          <button class="btn kq-s" type="button" aria-pressed="false">Tab scroll</button>
+          <button class="btn kq-s" type="button" aria-pressed="false">No ids</button>
+          <button class="btn kq-s" type="button" aria-pressed="false">Static page</button>
+        </div>
+        <p class="cap" id="kq-cap" aria-live="polite"></p>
+        <div class="result" id="kq-result"><b>Result</b><p>Pick a situation.</p></div>
+      </div>
+      <div class="scene"><svg id="kq-svg" viewBox="0 0 900 680" role="img" aria-label="Decision chart: need State or size from outside? yes: GlobalKey. Many reordering siblings with an id? ValueKey. Without an id? ObjectKey. Keep scroll position? PageStorageKey. Otherwise no key."></svg></div>
+      <div class="strip">
+        <Flow label="Rule of thumb" items={[{ t: 'no key', c: 'n' }, { t: 'ValueKey(id) for changing lists', c: 'b' }, { t: 'GlobalKey last', c: 'y' }]} />
+        <Src links={[{ label: 'Key', href: A + 'foundation/Key-class.html' }, { label: 'ValueKey', href: A + 'foundation/ValueKey-class.html' }, { label: 'ObjectKey', href: A + 'widgets/ObjectKey-class.html' }, { label: 'PageStorageKey', href: A + 'widgets/PageStorageKey-class.html' }]} />
+      </div>
+    </section>
+
+    <!-- 5 · When not -->
+    <section class="act" id="act-5" data-label="When not" aria-label="The cost of overusing GlobalKey">
+      <div class="panel">
+        <p class="kick"><i>5</i>When not</p>
+        <h2><em>When not</em>: the price of GlobalKey.</h2>
+        <div class="explain"><b>In simple words</b><p class="lg">A GlobalKey is <b>relatively expensive</b>, <b>unique in the whole app</b>, and lets one part of the UI reach into another. Overuse tangles your app.</p><p class="lg think"><i>Like a restaurant:</i> if every waiter has a special badge and everyone calls everyone, the head office is chaos.</p><p class="sm">GlobalKey is <b>relatively expensive</b>, unique in the whole app, and reaches across your UI. <i>Like a restaurant:</i> everyone calling everyone is chaos.</p></div>
+        <div class="seg">
+          <button class="btn kd-m" type="button" aria-pressed="true">Key in build()</button>
+          <button class="btn kd-m" type="button" aria-pressed="false">Same key twice</button>
+          <button class="btn kd-m" type="button" aria-pressed="false">Moving it</button>
+        </div>
+        <div class="ctl">
+          <button class="btn yellow" id="kd-run" type="button">Rebuild</button>
+          <button class="btn" id="kd-run2" type="button">Rebuild</button>
+        </div>
+        <p class="cap nocap" id="kd-cap" aria-live="polite"></p>
+        <div class="result" id="kd-result"><b>Result</b><p>Press a button.</p></div>
+      </div>
+      <div class="scene"><svg id="kd-svg" viewBox="0 0 900 680" role="img" aria-label="Three costs of GlobalKey: a key made in build loses State, a duplicate key crashes, moving a keyed subtree is expensive"></svg></div>
+      <div class="strip">
+        <Flow label="Before GlobalKey" items={[{ t: 'try no key', c: 'n' }, { t: 'try ValueKey', c: 'b' }, { t: 'try callbacks or a controller', c: 'g' }, { t: 'GlobalKey last', c: 'y' }]} />
+        <Src links={[{ label: 'GlobalKey (pitfalls)', href: A + 'widgets/GlobalKey-class.html' }]} />
+      </div>
+    </section>
+
+    <!-- 6 · Cheat sheet -->
+    <section class="act" id="act-6" data-label="Cheat sheet" aria-label="Cheat sheet: when to use each key">
+      <div class="panel">
+        <p class="kick"><i>6</i>Cheat sheet</p>
+        <h2><em>Use it</em> or skip it.</h2>
+        <div class="explain"><b>In simple words</b><p class="lg">Tap a key to see when it fits and when it does not. Always pick the <b>smallest key</b> that does the job.</p><p class="lg think"><i>Like a restaurant:</i> a table number first. The manager's badge only if nothing else works.</p><p class="sm">Tap a key to see when it fits. Pick the <b>smallest key</b> that works.</p></div>
+      </div>
+      <div class="scene kcheat">
+        <div class="kc-chips" role="group" aria-label="Pick a key">
+          <button class="btn kc-chip" type="button" aria-pressed="false">No key</button>
+          <button class="btn kc-chip" type="button" aria-pressed="true">ValueKey</button>
+          <button class="btn kc-chip" type="button" aria-pressed="false">ObjectKey</button>
+          <button class="btn kc-chip" type="button" aria-pressed="false">UniqueKey</button>
+          <button class="btn kc-chip" type="button" aria-pressed="false">PageStorageKey</button>
+          <button class="btn kc-chip" type="button" aria-pressed="false">GlobalKey</button>
+        </div>
+        <div class="kc-card" id="kc-card" aria-live="polite"></div>
+      </div>
+      <div class="strip">
+        <Flow label="Smallest key that works" items={[{ t: 'no key', c: 'n' }, { t: 'ValueKey / ObjectKey', c: 'b' }, { t: 'UniqueKey (reset)', c: 'g' }, { t: 'GlobalKey', c: 'y' }]} />
+        <Src links={[{ label: 'LocalKey', href: A + 'foundation/LocalKey-class.html' }, { label: 'ObjectKey', href: A + 'widgets/ObjectKey-class.html' }, { label: 'UniqueKey', href: A + 'foundation/UniqueKey-class.html' }, { label: 'PageStorageKey', href: A + 'widgets/PageStorageKey-class.html' }]} />
+      </div>
+    </section>
+
+    <!-- 7 · Recap -->
+    <section class="act" id="act-7" data-label="Recap" aria-label="Recap">
+      <div class="panel">
+        <p class="kick"><i>7</i>Recap</p>
+        <h2>The <em>short</em> version.</h2>
+        <div class="explain"><b>In simple words</b><p class="lg">ValueKey keeps list items straight. GlobalKey reaches or moves one widget, and it costs more. Use it last.</p><p class="lg think"><i>Like a restaurant:</i> table numbers for tables. The manager's badge for special jobs.</p><p class="sm">ValueKey keeps list items straight. GlobalKey reaches or moves one widget, and costs more. Use it last.</p></div>
+        <div class="ctl">
+          <button class="btn primary" id="to-expert" type="button">Expert answer &rarr;</button>
+          <button class="btn" id="again" type="button">Start again</button>
+        </div>
+      </div>
+      <div class="scene">
+        <div class="cards" id="cards">
+          <div class="acard c1"><small>GlobalKey over ValueKey, when?</small><p>When you must reach a widget's State or size from outside, or move it to a new parent and keep its State.</p></div>
+          <div class="acard c2"><small>Downside of overusing it</small><p>Relatively expensive, unique in the whole app, couples your UI, and a key made in build() loses State.</p></div>
+          <div class="acard c3"><small>Default</small><p><span class="pill no">No key</span><span class="pill yes">ValueKey(id) for lists</span><span class="pill maybe">GlobalKey last</span></p></div>
+        </div>
+      </div>
+      <div class="strip">
+        <Flow label="1. Which key?" items={[{ t: 'need State, size or a move?', c: 'y' }, { t: 'yes: GlobalKey', c: 'y' }, { t: 'no: ValueKey for lists', c: 'b' }]} />
+        <Flow label="2. The cost" items={[{ t: 'GlobalKey', c: 'y' }, { t: 'expensive + unique app-wide', c: 'r' }, { t: 'tangles your UI', c: 'r' }, { t: 'never in build()', c: 'r' }]} />
+        <Src links={[{ label: 'GlobalKey', href: A + 'widgets/GlobalKey-class.html' }, { label: 'ValueKey', href: A + 'foundation/ValueKey-class.html' }, { label: 'Widget.canUpdate', href: A + 'widgets/Widget/canUpdate.html' }]} />
+      </div>
+    </section>
+
+    <!-- 8 · Expert -->
+    <section class="act read" id="act-expert" data-label="Expert" aria-label="Expert answer">
+      <div class="panel">
+        <p class="kick"><i>&#9733;</i>For experts</p>
+        <h2>The question, <em>answered</em>.</h2>
+        <div class="seg">
+          <button class="btn" id="x-b1" type="button" aria-pressed="true">30 seconds</button>
+          <button class="btn" id="x-b2" type="button" aria-pressed="false">Full answer</button>
+        </div>
+        <p class="cap" id="x-q" style="min-height:0"></p>
+        <div class="ctl"><button class="btn primary" id="x-copy" type="button">Copy this answer</button><span class="cap" id="x-note" style="min-height:0" aria-live="polite"></span></div>
+        <Src links={[{ label: 'Key', href: A + 'foundation/Key-class.html' }, { label: 'GlobalKey', href: A + 'widgets/GlobalKey-class.html' }, { label: 'ValueKey', href: A + 'foundation/ValueKey-class.html' }, { label: 'Widget.canUpdate', href: A + 'widgets/Widget/canUpdate.html' }]} />
+      </div>
+      <div class="scene read">
+        <div class="expert">
+          <article id="x-a1">
+            <h3>Local identity: ValueKey. Cross-tree access or moving: GlobalKey.</h3>
+            <p class="sum">Use a ValueKey (or ObjectKey) when Flutter only needs to match items among siblings. Use a GlobalKey only when you must reach into a widget or move it and keep its State. It costs more and couples your code.</p>
+            <ul>
+              <li><b>Choose ValueKey</b> for siblings that reorder, insert or get removed and have a stable id. Flutter then matches by key instead of by position, so each State stays with its own data.</li>
+              <li><b>Choose GlobalKey</b> when you need (1) the <code>State</code>, <code>BuildContext</code> or size of a widget from outside its subtree, for example <code>GlobalKey&lt;FormState&gt;</code>, or (2) to move a widget to a different parent, in the same frame, and keep its State.</li>
+              <li><b>Common downside:</b> GlobalKeys are relatively expensive (reparenting deactivates the State and its descendants and rebuilds InheritedWidget dependents), must be unique across the whole app (a duplicate asserts), couple unrelated parts of the UI through imperative access, and a GlobalKey created inside <code>build()</code> throws away the subtree's State on every rebuild.</li>
+              <li><b>Rule:</b> no key by default, ValueKey for dynamic lists, GlobalKey last, and let a State own it.</li>
+            </ul>
+          </article>
+          <article id="x-a2" hidden>
+            <h3>Keys decide which Element, and so which State, a new widget updates.</h3>
+            <p class="sum">Without a key, Flutter matches old and new widgets by <code>runtimeType</code> and position. A key adds identity. A local key is compared among siblings. A GlobalKey is compared across the whole app, and can be found from anywhere.</p>
+            <h4>What</h4>
+            <ul>
+              <li><b>The rule.</b> <code>Widget.canUpdate</code> is true only if the old and new widget have an equal <code>runtimeType</code> and an equal <code>key</code>. Otherwise the old Element is replaced.</li>
+              <li><b>Local keys</b> (<code>LocalKey</code>) must be unique among Elements with the same parent. <code>ValueKey</code> equals another if their values are <code>==</code>. <code>ObjectKey</code> uses <code>identical</code> on its value. <code>UniqueKey</code> equals only itself. <code>PageStorageKey</code> is a ValueKey that also saves state such as scroll position.</li>
+              <li><b>GlobalKey</b> is unique across the entire app. It exposes <code>currentState</code>, <code>currentContext</code> and <code>currentWidget</code> for the widget that has it.</li>
+            </ul>
+            <h4>Why</h4>
+            <ul>
+              <li>If a list is reordered without keys, Flutter can attach the wrong <code>State</code> to an unkeyed StatefulWidget. The framework docs call this a common mistake.</li>
+              <li>State lives in the Element. Keys are how you tell Flutter which Element belongs to which data.</li>
+            </ul>
+            <h4>How GlobalKey works</h4>
+            <ul>
+              <li>Widgets with a global key reparent their subtrees when they move. The widget must arrive at its new place in the same animation frame in which it left the old one.</li>
+              <li>The Element is moved, not recreated, so its State survives. In the source, the BuildOwner keeps a registry of every GlobalKey in use.</li>
+              <li>Moving triggers <code>State.deactivate</code> on that State and all its descendants, then forces dependents of an <code>InheritedWidget</code> to rebuild. The docs call this relatively expensive.</li>
+            </ul>
+            <h4>When to pick which</h4>
+            <ul>
+              <li><b>ValueKey(id):</b> list items with a stable unique id from the data model.</li>
+              <li><b>ObjectKey(item):</b> no id, but each item is its own object (and you keep the same instances).</li>
+              <li><b>UniqueKey:</b> you want a fresh State on purpose. Never inside build() if the State should survive.</li>
+              <li><b>GlobalKey:</b> validate a Form from a button outside it, drive another widget's State, read a widget's size or position, or keep a player alive while you move it between layouts.</li>
+            </ul>
+            <h4>When not, and the downsides</h4>
+            <ul>
+              <li><b>Cost.</b> Reparenting is relatively expensive (see above). The docs say: if you do not need these features, use a Key, ValueKey, ObjectKey or UniqueKey.</li>
+              <li><b>App-wide uniqueness.</b> Two widgets with the same GlobalKey in the tree assert at runtime. Big apps make this easy to hit.</li>
+              <li><b>Recreated in build().</b> A new GlobalKey on every build throws away the old subtree and its State, and hurts performance. Create it once and let a State own it, for example in <code>initState</code>.</li>
+              <li><b>Coupling (in practice).</b> <code>currentState!.something()</code> is imperative and reaches across the tree. It is null when the widget is not mounted, and it hides data flow. Prefer callbacks, controllers or state management first.</li>
+            </ul>
+            <p class="end"><b>Answer in one line:</b> a ValueKey keeps siblings matched, cheaply and locally. A GlobalKey is for reaching or moving one widget, and overusing it costs performance and clarity.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="nav" aria-label="Lesson navigation">
+    <button class="btn" id="prev" type="button">&larr; Back</button>
+    <div class="dots" id="dots">
+      {labels.map((l, i) => <button type="button" data-i={i} aria-label={`Go to ${l}`}></button>)}
+    </div>
+    <span class="label" id="label">Start</span>
+    <button class="btn primary" id="next" type="button">Next &rarr;</button>
+  </nav>
+
+  <script>
+    import { initDeck } from '../../scripts/study/deck';
+    initDeck('keys');
+  </script>
+</StudyLayout>

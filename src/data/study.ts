@@ -25,4 +25,15 @@ export const episodes: Episode[] = [
     ],
     slides: 10,
   },
+  {
+    slug: 'keys',
+    number: 2,
+    title: 'GlobalKey or ValueKey? When, and what is the cost?',
+    summary: 'Why widgets need keys, what each key does, when to pick which, and why GlobalKey is easy to overuse.',
+    questions: [
+      'When would you choose a GlobalKey over a ValueKey?',
+      'What is a common downside of overusing GlobalKey?',
+    ],
+    slides: 9,
+  },
 ];

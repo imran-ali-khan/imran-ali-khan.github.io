@@ -1334,7 +1334,7 @@ details.say p {
 }
 @media (max-height: 780px) and (min-width: 861px) and (min-aspect-ratio: 1/1) {
   .panel {
-    gap: 10px;
+    gap: 7px;
   }
   .panel h1 {
     font-size: clamp(30px, 6.4vh, 52px);
@@ -1376,7 +1376,7 @@ details.say p {
   }
 }
 
-.strip .jflow #j-flow {
+.strip .jflow > div {
   flex: 1;
   min-width: 0;
   min-height: 70px;
@@ -1387,7 +1387,7 @@ details.say p {
   .strip .jflow {
     display: block;
   }
-  .strip .jflow #j-flow {
+  .strip .jflow > div {
     min-height: 34px;
     display: block;
   }
@@ -1504,7 +1504,7 @@ details.say p {
   .strip .src::-webkit-scrollbar {
     display: none;
   }
-  .strip .jflow #j-flow {
+  .strip .jflow > div {
     min-height: 54px;
     display: block;
   }
@@ -1550,7 +1550,7 @@ details.say p {
     flex: none;
     white-space: nowrap;
   }
-  .strip .jflow #j-flow {
+  .strip .jflow > div {
     min-height: 30px;
   }
   .panel h2 {
@@ -1602,5 +1602,295 @@ details.say p {
   }
   .strip .ar {
     font-size: 12px;
+  }
+}
+
+/* ---------- Episode 2 (keys) ---------- */
+[hidden] {
+  display: none !important;
+}
+.inl {
+  color: var(--blue-d);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.qlist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.qlist li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 800;
+}
+.qlist i {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+  font-style: normal;
+  font-size: 13px;
+  font-weight: 900;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chips .btn {
+  min-height: 40px;
+  padding: 0 14px;
+  font-size: 14.5px;
+  border-radius: 14px;
+}
+.scene.kcheat {
+  display: block;
+  padding: 18px;
+  overflow: auto;
+}
+.kc-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.kc-chips .btn {
+  min-height: 40px;
+  padding: 0 14px;
+  font-size: 14.5px;
+  border-radius: 14px;
+}
+.kc-card {
+  display: grid;
+  gap: 14px;
+}
+.kc-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+}
+.kc-head h3 {
+  font-size: clamp(26px, 3vw, 38px);
+  letter-spacing: -0.03em;
+}
+.kc-scope {
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: #e4e9ff;
+  border: 2.5px solid var(--ink);
+  font-size: 13px;
+  font-weight: 900;
+}
+.kc-scope.g {
+  background: var(--yellow);
+}
+.kc-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.kc-use,
+.kc-not {
+  padding: 12px 14px;
+  border-radius: 20px;
+  border: 3px solid var(--ink);
+}
+.kc-use {
+  background: #d9f7ea;
+}
+.kc-not {
+  background: #ffe3de;
+}
+.kc-cols b {
+  display: block;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.kc-use b {
+  color: #0b8a58;
+}
+.kc-not b {
+  color: #d63a3a;
+}
+.kc-cols p {
+  margin: 4px 0 0;
+  font-size: clamp(15px, 1.3vw, 18px);
+  line-height: 1.35;
+  font-weight: 800;
+}
+.kc-code {
+  display: block;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: var(--ink);
+  color: #e9ecff;
+  font-family: var(--mono);
+  font-size: clamp(13px, 1.2vw, 16px);
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 860px), (max-aspect-ratio: 1/1) {
+  .scene.kcheat {
+    padding: 12px;
+  }
+  .kc-chips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-bottom: 10px;
+  }
+  .kc-chips .btn {
+    flex: none;
+    min-height: 36px;
+    font-size: 13.5px;
+  }
+  .kc-card {
+    gap: 10px;
+  }
+  .kc-cols {
+    gap: 8px;
+  }
+  .kc-use,
+  .kc-not {
+    padding: 8px 10px;
+    border-width: 2.5px;
+  }
+  .kc-cols p {
+    font-size: 13.5px;
+  }
+  .kc-code {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+  .chips {
+    gap: 6px;
+  }
+  .chips .btn {
+    min-height: 36px;
+    padding: 0 10px;
+    font-size: 13px;
+  }
+  .qlist {
+    display: none;
+  }
+}
+.kc-row {
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  align-items: start;
+  gap: 10px;
+}
+.kc-row > span {
+  padding-top: 3px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mut);
+}
+.kc-row p {
+  margin: 0;
+  font-size: clamp(15px, 1.3vw, 18px);
+  line-height: 1.35;
+  font-weight: 800;
+}
+.kc-dots {
+  display: inline-flex;
+  gap: 4px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+.kc-dots u {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2.5px solid var(--ink);
+  background: #fff;
+}
+.kc-dots u.on {
+  background: var(--coral);
+}
+@media (max-width: 860px), (max-aspect-ratio: 1/1) {
+  .kc-row {
+    grid-template-columns: 64px 1fr;
+    gap: 6px;
+  }
+  .kc-row p {
+    font-size: 13.5px;
+  }
+}
+
+.nocap {
+  display: none;
+}
+
+/* keys episode: short text on phones */
+.explain .sm {
+  display: none;
+}
+@media (max-width: 860px), (max-aspect-ratio: 1/1) {
+  .explain .lg {
+    display: none;
+  }
+  .explain .sm {
+    display: block;
+  }
+  .explain .sm i {
+    font-style: normal;
+    font-weight: 900;
+    color: #8a6400;
+  }
+  .keysep .act {
+    grid-template-rows: minmax(230px, 1fr) auto auto;
+  }
+  .keysep .act > .panel {
+    max-height: 48dvh;
+  }
+  .keysep .strip .flow {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent);
+    mask-image: linear-gradient(90deg, #000 88%, transparent);
+  }
+  .keysep .strip .flow::-webkit-scrollbar {
+    display: none;
+  }
+  .keysep .strip .fn {
+    flex: none;
+    white-space: nowrap;
+  }
+  .keysep .strip .jflow > div {
+    min-height: 30px;
+  }
+  .keysep .act.read {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+}
+@media (max-width: 860px), (max-aspect-ratio: 1/1) {
+  .keysep .act > .panel {
+    max-height: 54dvh;
+  }
+  .keysep .seg .btn {
+    min-height: 40px;
+  }
+  .keysep .result p {
+    font-size: 15px;
+    line-height: 1.25;
+  }
+  .keysep .result {
+    padding: 7px 12px;
   }
 }
