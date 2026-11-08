@@ -82,9 +82,18 @@ html,body{height:100%;overflow:hidden}
 /* embedded in the lesson: the deck already has a title bar */
 html.embed body{background:transparent}
 html.embed .top{display:none}
-html.embed .shell.film{grid-template-rows:minmax(0,1fr) auto;padding:6px 10px 6px}
-@media(max-width:900px){html.embed .shell.film{grid-template-rows:minmax(0,1fr) auto auto;padding:4px 8px 4px}}
+.etop{display:none}
+html.embed .etop{display:flex;grid-column:1/-1;align-items:center;gap:6px 12px;flex-wrap:wrap;padding:0 4px}
+.etop .kn{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#5B7CFF;color:#fff;font-weight:900;font-size:14px}
+.etop .et{font-size:20px;font-weight:900;letter-spacing:-.02em;color:#14152E}
+.etop .lg{display:inline-flex;align-items:center;flex-wrap:wrap;gap:4px 8px;margin-left:auto;font-size:12.5px;font-weight:800;color:#53557E}
+.etop .lg span{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}.etop .lg i{width:14px;height:14px;border-radius:5px;border:2px solid #14152E;background:var(--c)}
+.etop .lg em{font-style:normal;padding:2px 9px;border-radius:999px;background:#fff;box-shadow:0 2px 0 rgba(20,21,46,.14);color:#14152E}
+html.embed .shell.film{grid-template-rows:auto minmax(0,1fr) auto;padding:4px 10px 6px;gap:8px}
+@media(max-width:900px){html.embed .shell.film{grid-template-rows:auto minmax(0,1fr) auto auto;padding:2px 8px 4px;gap:6px}
+ .etop .et{font-size:17px}.etop .lg{margin-left:0;width:100%;font-size:11.5px;gap:3px 6px}.etop .lg em{display:none}}
 </style></head><body><div class="shell film" id="film">
+<div class="etop"><span class="kn">7</span><b class="et">Watch it happen</b><span class="lg"><span><i style="--c:#5B7CFF"></i>Widget = order slip</span><span><i style="--c:#FFC93C"></i>Element = waiter</span><span><i style="--c:#3DDC97"></i>RenderObject = chef</span><em>Same # = same object</em></span></div>
 <div class="top"><div><h1>You call <em>setState()</em>. What changes in the three trees?</h1><p class="sub">Left to right: Widget, Element, RenderObject, then the pixels on your screen.</p></div><span class="badge">FILM · setState()</span></div>
 <div class="panelc stage" id="stage"><svg id="svg" role="img" aria-label="Film: a tap calls setState, then the widget, element and render object trees update, and the screen repaints"></svg><div class="frame" id="frame"><svg viewBox="0 0 24 24" fill="none" stroke="#14152E" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path id="fh" d="M12 12 V6" style="transform-origin:12px 12px"/></svg>Next frame</div><div class="hint" id="hint">Now explore: hover any node or the phone</div><div class="bar" id="bar"><i id="bi"></i></div></div>
 <aside class="side">

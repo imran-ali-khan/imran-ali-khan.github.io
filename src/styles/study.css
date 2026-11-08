@@ -143,7 +143,8 @@ body.study h3 {
   inset: 0;
   display: grid;
   grid-template-columns: minmax(300px, 410px) minmax(0, 1fr);
-  gap: 28px;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 0 28px;
   padding: 8px max(24px, env(safe-area-inset-left)) 10px max(24px, env(safe-area-inset-right));
   visibility: hidden;
   opacity: 0;
@@ -199,18 +200,68 @@ body.study h3 {
 @media (max-width: 860px), (max-aspect-ratio: 1/1) {
   .act {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1fr) auto;
-    gap: 14px;
-    padding: 6px 14px 8px;
+    grid-template-rows: minmax(140px, 1fr) auto auto;
+    gap: 10px;
+    padding: 4px 12px 6px;
   }
-  .scene {
-    order: -1;
+  .act > .scene {
+    grid-column: 1;
+    grid-row: 1;
     border-radius: 26px;
   }
-  .panel {
+  .act > .strip {
+    grid-column: 1;
+    grid-row: 2;
+    margin: 0;
+    padding: 8px 10px;
+    gap: 6px;
+  }
+  .act > .panel {
+    grid-column: 1;
+    grid-row: 3;
     align-self: stretch;
-    max-height: 46vh;
-    gap: 12px;
+    max-height: 47dvh;
+    gap: 10px;
+  }
+  .explain {
+    padding: 9px 13px 11px;
+    border-width: 2.5px;
+  }
+  .explain p {
+    font-size: 14.5px;
+    line-height: 1.35;
+    margin-top: 3px;
+  }
+  .explain .think {
+    margin-top: 6px;
+    padding-top: 6px;
+  }
+  .kick {
+    font-size: 12px;
+  }
+  .btn {
+    min-height: 44px;
+    padding: 0 16px;
+    font-size: 15px;
+  }
+  .result {
+    min-height: 0;
+    padding: 9px 13px;
+  }
+  .result p {
+    font-size: 16.5px;
+  }
+  .stat b {
+    font-size: 24px;
+  }
+  .stat {
+    padding: 8px 12px;
+  }
+  .legend li {
+    font-size: 14.5px;
+  }
+  .legend {
+    gap: 5px;
   }
 }
 
@@ -827,8 +878,8 @@ details.say p {
 
 /* flow chart (Compare) */
 .chart {
+  display: block;
   width: 100%;
-  max-width: 360px;
   height: auto;
 }
 .chart .ln path {
@@ -851,12 +902,12 @@ details.say p {
 }
 .chart text {
   font-family: var(--font);
-  font-size: 12px;
+  font-size: 13.5px;
   font-weight: 900;
   fill: var(--ink);
 }
 .chart .yn {
-  font-size: 11px;
+  font-size: 12px;
   fill: var(--mut);
 }
 .chart .nd.hit {
@@ -1061,8 +1112,12 @@ details.say p {
   .act.read .scene {
     order: 0;
   }
-  .act.read .panel {
+  .act.read > .panel {
+    grid-row: 1;
     max-height: 36vh;
+  }
+  .act.read > .scene {
+    grid-row: 2;
   }
   .expert {
     padding: 16px 16px 24px;
@@ -1205,4 +1260,347 @@ details.say p {
   border: 0;
   background: transparent;
   color-scheme: light;
+}
+
+/* ---------- Strip: the flow diagram and docs links under the scene ---------- */
+.strip {
+  grid-column: 2;
+  grid-row: 2;
+  margin-top: 12px;
+  display: grid;
+  gap: 8px;
+  align-content: center;
+  min-width: 0;
+  padding: 10px 14px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.66);
+  box-shadow: 0 3px 0 var(--lip);
+}
+@media (min-width: 861px) and (min-aspect-ratio: 1/1) {
+  .act > .panel {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+  .act > .scene {
+    grid-column: 2;
+    grid-row: 1;
+  }
+}
+.strip .flowbox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.strip .flowlabel {
+  flex: none;
+  width: 92px;
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.2;
+}
+.strip .flow {
+  flex: 1;
+  min-width: 0;
+}
+.strip .src {
+  font-size: 12.5px;
+}
+.chartstrip {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px 22px;
+}
+.chartstrip .chart {
+  height: 120px;
+  width: auto;
+  max-width: 100%;
+  justify-self: start;
+}
+.chartstrip .src {
+  flex-direction: column;
+  align-items: flex-start;
+}
+@media (max-height: 800px) {
+  .stage {
+    top: 48px;
+    bottom: 70px;
+  }
+  .bar {
+    height: 48px;
+  }
+  .nav {
+    height: 70px;
+  }
+}
+@media (max-height: 780px) and (min-width: 861px) and (min-aspect-ratio: 1/1) {
+  .panel {
+    gap: 10px;
+  }
+  .panel h1 {
+    font-size: clamp(30px, 6.4vh, 52px);
+  }
+  .panel h2 {
+    font-size: clamp(24px, 4.8vh, 38px);
+  }
+  .explain {
+    padding: 10px 14px 12px;
+  }
+  .explain p {
+    font-size: 15px;
+    line-height: 1.35;
+  }
+  .btn {
+    min-height: 42px;
+    padding: 0 16px;
+    font-size: 15px;
+  }
+  .result {
+    min-height: 0;
+    padding: 9px 14px;
+  }
+  .result p {
+    font-size: 17px;
+  }
+  .cap {
+    min-height: 0;
+    font-size: 15.5px;
+  }
+  .stat b {
+    font-size: 26px;
+  }
+  .legend li {
+    font-size: 15px;
+  }
+  .chartstrip .chart {
+    height: 104px;
+  }
+}
+
+.strip .jflow #j-flow {
+  flex: 1;
+  min-width: 0;
+  min-height: 70px;
+  display: flex;
+  align-items: center;
+}
+@media (max-width: 860px), (max-aspect-ratio: 1/1) {
+  .strip .jflow {
+    display: block;
+  }
+  .strip .jflow #j-flow {
+    min-height: 34px;
+    display: block;
+  }
+}
+
+.result .cap {
+  min-height: 0;
+  margin-top: 4px;
+  font-size: 15px;
+  line-height: 1.35;
+}
+@media (max-width: 860px), (max-aspect-ratio: 1/1) {
+  .kick,
+  .explain > b,
+  .lead,
+  .deskonly,
+  .explain .sk {
+    display: none;
+  }
+  .explain .think {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+  }
+  .act > .panel {
+    gap: 8px;
+  }
+  .panel h2 {
+    font-size: clamp(22px, 6vw, 27px);
+  }
+  .explain p {
+    font-size: 14px;
+  }
+  .seg {
+    display: flex;
+    width: 100%;
+    flex-wrap: nowrap;
+  }
+  .seg .btn {
+    flex: 1 1 0;
+    padding: 0 6px;
+    font-size: 14px;
+    text-align: center;
+  }
+  .result b {
+    font-size: 11px;
+  }
+  .cap {
+    font-size: 15px;
+  }
+}
+
+.ctl .stats {
+  flex: 1 1 200px;
+}
+@media (max-width: 860px), (max-aspect-ratio: 1/1) {
+  .act > .panel {
+    max-height: 50dvh;
+  }
+  .ctl .stats {
+    flex: 1 1 0;
+    min-width: 0;
+    gap: 8px;
+  }
+  .stat {
+    padding: 5px 10px;
+  }
+  .stat span {
+    font-size: 11px;
+  }
+  .stat b {
+    font-size: 21px;
+  }
+  .chartstrip .chart {
+    max-height: 86px;
+  }
+  .bar {
+    height: 44px;
+  }
+  .stage {
+    top: 44px;
+  }
+}
+
+/* phone: strip rules (placed last so they win over the desktop strip rules) */
+@media (max-width: 860px), (max-aspect-ratio: 1/1) {
+  .strip .flowbox {
+    display: block;
+  }
+  .strip .flowlabel {
+    width: auto;
+    margin: 0 0 3px;
+  }
+  .strip .flow {
+    flex-wrap: wrap;
+    gap: 4px 3px;
+  }
+  .strip .fn {
+    font-size: 11.5px;
+    padding: 3px 7px;
+    border-width: 2.5px;
+    border-radius: 10px;
+  }
+  .strip .ar {
+    font-size: 11px;
+  }
+  .strip .src {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+    font-size: 12px;
+  }
+  .strip .src::-webkit-scrollbar {
+    display: none;
+  }
+  .strip .jflow #j-flow {
+    min-height: 54px;
+    display: block;
+  }
+  .chartstrip {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .chartstrip .chart {
+    width: 100%;
+    height: auto;
+    max-height: 86px;
+  }
+  .chartstrip .src {
+    flex-direction: row;
+    align-items: center;
+    justify-self: start;
+  }
+}
+
+/* scene art always fits inside its card */
+.scene > svg {
+  position: absolute;
+  inset: 0;
+}
+@media (max-width: 860px), (max-aspect-ratio: 1/1) {
+  .strip .src {
+    display: none;
+  }
+}
+
+/* small phones (short screens): one-line flows that scroll sideways, tighter panel */
+@media (max-width: 860px) and (max-height: 700px), (max-aspect-ratio: 1/1) and (max-height: 700px) {
+  .strip .flow {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(90deg, #000 86%, transparent);
+    mask-image: linear-gradient(90deg, #000 86%, transparent);
+  }
+  .strip .flow::-webkit-scrollbar {
+    display: none;
+  }
+  .strip .fn {
+    flex: none;
+    white-space: nowrap;
+  }
+  .strip .jflow #j-flow {
+    min-height: 30px;
+  }
+  .panel h2 {
+    font-size: 22px;
+  }
+  .explain {
+    padding: 8px 12px 10px;
+  }
+  .btn {
+    min-height: 40px;
+  }
+}
+
+/* top bar never wraps on narrow phones */
+.bar a,
+.bar span {
+  white-space: nowrap;
+}
+@media (max-width: 430px) {
+  .bar .ep {
+    display: none;
+  }
+  .bar {
+    justify-content: flex-start;
+    gap: 14px;
+  }
+}
+
+.strip .ar {
+  white-space: nowrap;
+  flex: none;
+}
+/* on short phones the buttons come before the long explanation, so they are never below the fold */
+@media (max-width: 860px) and (max-height: 700px), (max-aspect-ratio: 1/1) and (max-height: 700px) {
+  .panel > .explain {
+    order: 9;
+  }
+}
+
+/* desktop strip: chips a little smaller so most flows fit on one line */
+@media (min-width: 861px) and (min-aspect-ratio: 1/1) {
+  .strip .fn {
+    font-size: 12px;
+    padding: 4px 8px;
+    border-width: 2.5px;
+  }
+  .strip .flow {
+    gap: 4px 3px;
+  }
+  .strip .ar {
+    font-size: 12px;
+  }
 }
